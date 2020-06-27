@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="css/estilo.css">
+    
+    <title>Reset.com</title>
+    <img class="logo" src="img/logo reiniciar.png" alt="">
+    <h1 class="titulo">Reset.com</h1>
+</head>
+<body>
+   <section class="nav-superior">
+       <div class="conten-nav-sup">
+           <a class="activa" href="">Inicio</a>
+           <a href="">Dominios</a>
+           <a href="">Hosting</a>
+           <a href="">Correo empresarial</a>
+           <a href="">Diseña tu sitio</a>
+           <a href="">Office 365</a>
+           <a href="">Accesorios</a>
+           <a href="">Contactanos</a>
+       </div>
+   </section>
+
+   <section>
+       <div class="conten-slide">
+            <div class="mislide fade">
+               <div class="numerotexto">1 /3</div>
+               <img src="img/dominio.jpg" style="width: 100%;" alt="">
+               <div class="texto">Foto 1</div>
+            </div>
+            <div class="mislide fade">
+              <div class="numerotexto">2 /3</div>
+              <img src="img/hosting.jpg" style="width: 100%;" alt="">
+              <div class="texto">Foto 2</div>
+           </div>
+           <div class="mislide fade">
+              <div class="numerotexto">3 /3</div>
+              <img src="img/correo.jpg" style="width: 100%;" alt="">
+              <div class="texto">Foto 3</div>
+           </div>
+    </div>
+    <br>
+    <div style="text-align: center;">
+        <span class="dot" ></span>
+        <span class="dot" ></span>
+        <span class="dot" ></span>
+    </div>
+
+<footer >
+    <div id="contenedorfooter" >
+        <p class="parrafo1">Reset.com </p>
+        <p class="parrafo2">Bogota.DC</p>  
+        <p class="parrafo3">2020</p>   
+    </div>
+       
+</footer>
+<script >
+    var slideIndex=0;
+    showSlides();
+
+    function showSlides(){
+        var i;
+        var slides=document.getElementsByClassName("mislide");
+        var dots=document.getElementsByClassName("dot");
+        for(i=0;i<slides.length;i++){
+            slides[i].style.display="none";
+        }
+        slideIndex++;
+        if(slideIndex > slides.length){slideIndex=1}
+        for(i=0;i<dots.length;i++){
+            dots[i].className=dots[i].className.replace("active","");
+        }
+        slides[slideIndex-1].style.display="block";
+        dots[slideIndex-1].className.display+="active";
+        setTimeout(showSlides,2000);
+    }
+</script>
+    
+</body>
+</html>
