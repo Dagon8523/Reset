@@ -4,238 +4,781 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Reset · Soluciones Digitales</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Syne:wght@700;800&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet"/>
 <style>
-/* ─── TOKENS ──────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   TOKENS — paleta clara inspirada en la imagen de marca (crema +
+   negro carbón + rojo del power-stroke + borgoña como profundidad)
+   ══════════════════════════════════════════════════════════════ */
 :root{
-  --black:   #111111;
-  --dark:    #1a1a1a;
-  --card:    #1e1e1e;
-  --border:  #2e2e2e;
-  --muted:   #444444;
-  --gray:    #888888;
-  --lgray:   #cccccc;
-  --white:   #f5f5f5;
-  --red:     #cc0000;
-  --red-dim: #991100;
-  --green:   #22c55e;
-  --r:       6px;
+  /* superficies */
+  --cream:      #FFFFFF;
+  --cream-2:    #F6F5F1;
+  --paper:      #FFFFFF;
+
+  /* texto */
+  --ink:        #17171A;
+  --ink-soft:   #504E48;
+  --ink-mute:   #8C887E;
+
+  /* líneas */
+  --line:       #E1DCCC;
+  --line-soft:  #EAE6D9;
+
+  /* acento único: rojo + borgoña como profundidad, nunca fondo sólido */
+  --red:        #E4231C;
+  --red-deep:   #B4160F;
+  --burgundy:   #7A0E14;
+  --red-glow:   rgba(228,35,28,.14);
+  --red-glow-soft: rgba(228,35,28,.07);
+
+  --green:      #1F9D55;
+
+  --r:  10px;
+  --r-lg: 18px;
+  --ease: cubic-bezier(.16,1,.3,1);
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--black);color:var(--white);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(circle at 18% -10%, #ffffff 0%, transparent 45%),
+    radial-gradient(circle at 100% 8%, #fafaf8 0%, transparent 42%),
+    var(--cream);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
 a{color:inherit;text-decoration:none}
-img{display:block}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit}
+
+/* foco visible accesible en todo el sitio */
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--red);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
 
 /* ─── UTILS ────────────────────────────────────────────────── */
-.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);border:1px solid var(--red-dim);border-radius:3px;padding:3px 10px}
-.red-line{width:40px;height:3px;background:var(--red);border-radius:2px;margin:14px 0 20px}
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--red-deep);
+  background:var(--red-glow-soft);
+  border:1px solid rgba(228,35,28,.18);
+  border-radius:20px;padding:5px 14px 5px 10px;
+}
+.tag .tag-dot{width:5px;height:5px;border-radius:50%;background:var(--red)}
+
+.accent-arc{
+  width:46px;height:10px;margin:16px 0 22px;
+  border-bottom:3px solid var(--red);
+  border-radius:0 0 40px 40px;
+  border-left:3px solid transparent;
+  border-right:3px solid transparent;
+}
+
+/* ─── LOGO SVG (reutilizado en nav, watermark, footer) ───────── */
+.logo-mark{display:block}
+
+/* wordmark: fuente redondeada. El acento rojo de marca vive en el
+   ícono circular (izquierda); el wordmark en línea queda limpio para
+   no duplicar el acento y evitar que se vea "suelto". */
+.wordmark{
+  font-family:'Fredoka',sans-serif;
+  font-weight:600;
+  letter-spacing:-.01em;
+  display:inline-flex;
+}
+.wordmark .rmark{position:relative;display:inline-block}
+
+/* watermark de marca — motivo repetido, muy sutil */
+.brand-watermark{
+  position:absolute;
+  pointer-events:none;
+  opacity:.045;
+  z-index:0;
+}
 
 /* ─── NAV ──────────────────────────────────────────────────── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(17,17,17,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:72px;
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(16px) saturate(1.1);
+  border-bottom:1px solid var(--line-soft);
+  transition:background .3s var(--ease);
+}
 .nav-logo{display:flex;align-items:center;gap:12px}
-.nav-logo-icon{width:32px;height:32px;background:#1a1a1a;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
-.nav-logo-icon::before{content:'⏻';color:var(--red);font-size:16px}
-.nav-wordmark{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em}
-.nav-wordmark span{color:var(--red)}
-nav ul{display:flex;gap:32px;list-style:none}
-nav ul a{font-size:13px;font-weight:500;color:var(--gray);transition:color .2s}
-nav ul a:hover{color:var(--white)}
-.nav-cta{background:var(--red);color:var(--white);font-size:13px;font-weight:600;padding:8px 20px;border-radius:var(--r);transition:background .2s}
-.nav-cta:hover{background:var(--red-dim)}
+.nav-wordmark{font-size:21px}
+nav ul{display:flex;gap:34px;list-style:none}
+nav ul li{position:relative}
+nav ul a{
+  font-size:13px;font-weight:500;color:var(--ink-soft);
+  transition:color .25s var(--ease);
+  padding:4px 0;
+  position:relative;
+}
+nav ul a::after{
+  content:'';position:absolute;left:50%;right:50%;bottom:-2px;height:2px;
+  background:var(--red);border-radius:2px;
+  transition:left .25s var(--ease),right .25s var(--ease);
+}
+nav ul a:hover{color:var(--ink)}
+nav ul a:hover::after{left:0;right:0}
+.nav-cta{
+  background:var(--ink);color:var(--cream);
+  font-size:13px;font-weight:600;
+  padding:10px 22px;border-radius:var(--r);
+  transition:background .25s var(--ease),transform .2s var(--ease);
+}
+.nav-cta:hover{background:var(--red);transform:translateY(-1px)}
 
 /* ─── HERO ─────────────────────────────────────────────────── */
-#inicio{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:100px 40px 60px;position:relative;overflow:hidden}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1100px;margin:0 auto;width:100%}
-.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:20px}
-.hero-h1{font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;letter-spacing:-.03em}
-.hero-h1 em{font-style:normal;color:var(--red)}
-.hero-sub{color:var(--gray);font-size:16px;line-height:1.7;margin-top:24px;max-width:440px}
-.hero-actions{display:flex;gap:16px;margin-top:36px;flex-wrap:wrap}
-.btn-primary{background:var(--red);color:var(--white);font-weight:700;font-size:14px;padding:14px 28px;border-radius:var(--r);transition:background .2s}
-.btn-primary:hover{background:var(--red-dim)}
-.btn-ghost{border:1px solid var(--border);color:var(--lgray);font-size:14px;font-weight:500;padding:14px 28px;border-radius:var(--r);transition:border-color .2s,color .2s}
-.btn-ghost:hover{border-color:var(--gray);color:var(--white)}
-.hero-stats{display:flex;gap:40px;margin-top:52px}
-.stat-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--white)}
-.stat-num sup{font-size:16px;color:var(--red)}
-.stat-label{font-size:12px;color:var(--gray);margin-top:2px}
+#inicio{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:120px 40px 80px;position:relative;overflow:hidden;
+}
+.hero-grid{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;
+  max-width:1140px;margin:0 auto;width:100%;position:relative;z-index:1;
+}
+.hero-eyebrow{
+  font-family:'Inter',sans-serif;font-style:italic;font-weight:500;
+  font-size:13px;letter-spacing:.02em;color:var(--red-deep);margin-bottom:22px;
+}
+.hero-h1{
+  font-family:'Fredoka',sans-serif;
+  font-size:clamp(38px,5.2vw,68px);
+  font-weight:600;
+  line-height:1.06;
+  letter-spacing:-.01em;
+  color:var(--ink);
+}
+.hero-h1 .hl{position:relative;display:inline-block;white-space:nowrap}
+.hero-h1 .hl svg{position:absolute;left:0;bottom:-.08em;width:100%;height:.28em;overflow:visible}
+.hero-h1 .hl path{fill:none;stroke:var(--red);stroke-width:5;stroke-linecap:round}
 
-/* hero right: mock browser */
+.hero-sub{color:var(--ink-soft);font-size:16px;line-height:1.75;margin-top:26px;max-width:440px}
+
+.hero-actions{display:flex;gap:16px;margin-top:38px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--red);color:#fff;font-weight:600;font-size:14px;
+  padding:15px 30px;border-radius:var(--r);
+  box-shadow:0 14px 30px -8px var(--red-glow), 0 2px 6px rgba(23,23,26,.06);
+  transition:background .25s var(--ease),transform .2s var(--ease),box-shadow .25s var(--ease);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary:hover{background:var(--red-deep);transform:translateY(-2px);box-shadow:0 20px 40px -10px var(--red-glow),0 4px 10px rgba(23,23,26,.08)}
+.btn-ghost{
+  border:1.5px solid var(--line);color:var(--ink-soft);font-size:14px;font-weight:500;
+  padding:15px 30px;border-radius:var(--r);background:var(--paper);
+  transition:border-color .25s var(--ease),color .25s var(--ease),transform .2s var(--ease);
+}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-2px)}
+
+.hero-stats{display:flex;gap:0;margin-top:56px}
+.stat{padding-right:36px;margin-right:36px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:none;padding-right:0;margin-right:0}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--ink);
+  display:flex;align-items:baseline;gap:2px;font-variant-numeric:tabular-nums;
+}
+.stat-num .accent{color:var(--red);font-size:16px}
+.stat-label{font-size:11.5px;color:var(--ink-mute);margin-top:4px;line-height:1.5}
+
+/* ── hero visual: browser mockup con más detalle ─────────────── */
 .hero-visual{position:relative}
-.browser-chrome{background:var(--dark);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6)}
-.browser-bar{background:#222;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.browser-chrome{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 50px 90px -30px rgba(23,23,26,.22), 0 20px 40px -20px var(--red-glow-soft);
+  position:relative;z-index:1;
+}
+.browser-bar{
+  background:var(--cream-2);padding:12px 16px;
+  display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);
+}
 .dots{display:flex;gap:6px}
-.dot{width:10px;height:10px;border-radius:50%}
-.dot-r{background:#cc0000}.dot-y{background:#e5a70a}.dot-g{background:#22c55e}
-.browser-url{flex:1;background:#2a2a2a;border-radius:4px;padding:4px 12px;font-size:11px;color:var(--gray);font-family:monospace}
-.browser-body{height:320px;background:linear-gradient(160deg,#1a1a1a 0%,#111 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;position:relative;overflow:hidden}
-.browser-body::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(204,0,0,.18) 0%,transparent 70%)}
-.browser-mocksite-label{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.1em}
-.browser-mocksite-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white)}
-.browser-mocksite-btn{background:var(--red);color:#fff;font-size:12px;font-weight:600;padding:8px 20px;border-radius:4px;margin-top:8px}
-.floating-badge{position:absolute;background:var(--dark);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px}
-.badge-top{top:-20px;right:20px;color:var(--green)}
-.badge-top strong{display:block;font-size:16px;font-family:'Syne',sans-serif}
-.badge-bot{bottom:-20px;left:20px;color:var(--lgray)}
-.badge-bot span{display:block;font-size:10px;color:var(--gray)}
+.dot{width:9px;height:9px;border-radius:50%}
+.dot-r{background:#E4231C}.dot-y{background:#E5A70A}.dot-g{background:#1F9D55}
+.browser-url{
+  flex:1;background:var(--paper);border:1px solid var(--line-soft);border-radius:6px;
+  padding:5px 12px;font-size:11px;color:var(--ink-mute);font-family:monospace;
+  display:flex;align-items:center;gap:6px;
+}
+.browser-url .fav{width:8px;height:8px;border-radius:2px;background:var(--red);flex-shrink:0}
 
-/* ─── SECTION WRAPPER ──────────────────────────────────────── */
-section{padding:80px 40px;max-width:1100px;margin:0 auto}
-.section-full{max-width:none;padding:80px 40px}
+.browser-body{
+  height:340px;background:var(--paper);position:relative;overflow:hidden;
+  padding:26px 28px;display:flex;flex-direction:column;gap:14px;
+}
+.mock-nav{display:flex;align-items:center;justify-content:space-between;opacity:0;animation:mockIn .5s var(--ease) forwards;animation-delay:.1s}
+.mock-logo{width:26px;height:26px;border-radius:50%;border:1.6px solid var(--ink);flex-shrink:0}
+.mock-links{display:flex;gap:10px}
+.mock-links span{width:26px;height:6px;border-radius:3px;background:var(--line)}
+.mock-hero{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.mock-line{height:11px;border-radius:4px;background:var(--cream-2);opacity:0;animation:mockIn .5s var(--ease) forwards}
+.mock-line.l1{width:78%;height:20px;animation-delay:.35s}
+.mock-line.l2{width:92%;animation-delay:.55s}
+.mock-line.l3{width:60%;animation-delay:.7s}
+.mock-btn{
+  margin-top:10px;width:130px;height:34px;border-radius:8px;
+  background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);
+  opacity:0;animation:mockIn .5s var(--ease) forwards;animation-delay:.9s;
+}
+.mock-card-row{display:flex;gap:10px;margin-top:16px}
+.mock-card{
+  flex:1;height:64px;border-radius:8px;background:var(--cream);border:1px solid var(--line-soft);
+  opacity:0;animation:mockIn .5s var(--ease) forwards;
+}
+.mock-card:nth-child(1){animation-delay:1.05s}
+.mock-card:nth-child(2){animation-delay:1.15s}
+.mock-card:nth-child(3){animation-delay:1.25s}
+@keyframes mockIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.browser-body::after{
+  content:'';position:absolute;top:-70px;right:-70px;width:240px;height:240px;
+  background:radial-gradient(circle,var(--red-glow) 0%,transparent 70%);pointer-events:none;
+}
+
+.floating-badge{
+  position:absolute;background:var(--paper);border:1px solid var(--line);
+  border-radius:12px;padding:12px 18px;font-size:12px;z-index:2;
+  box-shadow:0 24px 40px -18px rgba(23,23,26,.18);
+  animation:floaty 5s var(--ease) infinite;
+}
+.badge-top{top:-22px;right:24px;color:var(--green);animation-delay:.2s}
+.badge-top strong{display:block;font-size:16px;font-family:'Syne',sans-serif;color:var(--ink)}
+.badge-bot{bottom:-22px;left:24px;color:var(--ink-soft);animation-delay:1.4s}
+.badge-bot strong{display:block;font-size:14px;font-family:'Syne',sans-serif;color:var(--ink);font-weight:800}
+.badge-bot span{display:block;font-size:10px;color:var(--ink-mute);margin-top:1px}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ─── SECTION WRAPPER genérico ────────────────────────────────*/
+section{padding:110px 40px;max-width:1140px;margin:0 auto;position:relative}
+.section-h2{
+  font-family:'Fredoka',sans-serif;font-size:clamp(28px,3.6vw,42px);
+  font-weight:600;letter-spacing:-.01em;line-height:1.18;color:var(--ink);
+}
+.section-sub{color:var(--ink-soft);font-size:15px;max-width:560px;margin:16px auto 0;line-height:1.7}
 .section-center{text-align:center}
-.section-h2{font-family:'Syne',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
-.section-sub{color:var(--gray);font-size:15px;max-width:560px;margin:16px auto 0}
 
-/* ─── MISSION BAND ─────────────────────────────────────────── */
-#nosotros-band{background:var(--dark);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-#nosotros-band section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px}
-.mission-block{}
-.mission-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:10px}
-.mission-text{color:var(--lgray);font-size:14px;line-height:1.7}
-.values-list{display:flex;flex-direction:column;gap:10px;margin-top:2px}
-.value-item{display:flex;gap:10px;align-items:flex-start}
-.value-dot{width:6px;height:6px;background:var(--red);border-radius:50%;margin-top:6px;flex-shrink:0}
-.value-name{font-weight:600;font-size:13px;color:var(--white)}
-.value-desc{font-size:12px;color:var(--gray);line-height:1.5}
+/* ─── MISSION / VISION / VALUES ───────────────────────────────*/
+#nosotros-band{
+  background:var(--cream-2);
+  position:relative;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+}
+#nosotros-band::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 85% 20%, rgba(228,35,28,.05) 0%, transparent 45%);
+  pointer-events:none;
+}
+#nosotros-band section{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:56px;
+  padding:100px 40px;position:relative;z-index:1;
+}
+.mission-block{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+.mission-block.in-view{opacity:1;transform:translateY(0)}
+.mission-block:nth-child(2){transition-delay:.1s}
+.mission-block:nth-child(3){transition-delay:.2s}
 
-/* ─── PRODUCTS ─────────────────────────────────────────────── */
-#productos-wrap{background:var(--black)}
-.products-intro{text-align:center;padding:80px 40px 40px;max-width:1100px;margin:0 auto}
-.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:0 40px 80px;max-width:1100px;margin:0 auto}
+.mission-label{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--red-deep);
+  margin-bottom:14px;
+}
+.mission-label .ml-icon{width:15px;height:15px;flex-shrink:0}
+.mission-text{color:var(--ink-soft);font-size:14px;line-height:1.8}
+.mission-text em{font-style:italic;color:var(--ink)}
+
+.values-list{display:flex;flex-direction:column;gap:16px;margin-top:2px}
+.value-item{display:flex;gap:12px;align-items:flex-start}
+.value-icon{
+  width:20px;height:20px;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+}
+.value-icon svg{width:11px;height:14px}
+.value-name{font-weight:600;font-size:13.5px;color:var(--ink);font-family:'Inter',sans-serif}
+.value-desc{font-size:12.5px;color:var(--ink-mute);line-height:1.6;margin-top:2px}
+
+/* ─── PRODUCTS INTRO ───────────────────────────────────────── */
+#productos-wrap{position:relative}
+.products-intro{text-align:center;padding:110px 40px 44px;max-width:720px;margin:0 auto}
+.products-intro .tag{margin-bottom:4px}
+.products-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:26px;
+  padding:0 40px 130px;max-width:1140px;margin:0 auto;
+}
 
 /* Product card */
-.pcard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .3s,transform .3s}
-.pcard:hover{border-color:var(--red);transform:translateY(-4px)}
+.pcard{
+  background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;display:flex;flex-direction:column;position:relative;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(23,23,26,.05);
+  transition:box-shadow .35s var(--ease), transform .35s var(--ease), border-color .35s var(--ease);
+  opacity:0;transform:translateY(20px);
+}
+.pcard.in-view{opacity:1;transform:translateY(0)}
+.pcard:nth-child(1){transition:box-shadow .35s var(--ease), transform .35s var(--ease), border-color .35s var(--ease), opacity .6s var(--ease) 0s, transform .6s var(--ease) 0s}
+.pcard:nth-child(2){transition-delay:.08s}
+.pcard:nth-child(3){transition-delay:.16s}
+.pcard:hover{
+  transform:translateY(-6px) scale(1.012);
+  border-color:rgba(228,35,28,.3);
+  box-shadow:0 30px 60px -20px rgba(23,23,26,.16), 0 14px 30px -12px var(--red-glow);
+}
 .pcard.featured{border-color:var(--red);position:relative}
-.pcard.featured::before{content:'MÁS POPULAR';position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--red);font-size:10px;font-weight:700;letter-spacing:.1em;color:#fff;padding:4px 16px;border-radius:0 0 6px 6px}
+.pcard.featured::before{
+  content:'MÁS POPULAR';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);
+  font-size:10px;font-weight:700;letter-spacing:.1em;color:#fff;
+  padding:5px 18px;border-radius:0 0 10px 10px;z-index:2;
+}
+.pcard-expand{
+  position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:50%;
+  background:var(--cream-2);display:flex;align-items:center;justify-content:center;
+  opacity:0;transform:scale(.8);transition:opacity .25s var(--ease),transform .25s var(--ease),background .25s var(--ease);
+  z-index:2;
+}
+.pcard:hover .pcard-expand{opacity:1;transform:scale(1)}
+.pcard-expand svg{width:13px;height:13px}
+.pcard:hover .pcard-expand{background:var(--red)}
+.pcard:hover .pcard-expand svg path,.pcard:hover .pcard-expand svg line{stroke:#fff}
 
-.pcard-header{padding:28px 28px 20px;border-bottom:1px solid var(--border)}
-.pcard-icon{width:44px;height:44px;background:rgba(204,0,0,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
-.pcard-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.01em}
-.pcard-promise{font-size:12px;color:var(--gray);margin-top:8px;line-height:1.6}
+.pcard-header{padding:32px 28px 20px;border-bottom:1px solid var(--line-soft)}
+.pcard-icon{
+  width:46px;height:46px;border-radius:12px;
+  background:linear-gradient(135deg,var(--red-glow) 0%,transparent 100%);
+  border:1px solid rgba(228,35,28,.14);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+}
+.pcard-icon svg{width:21px;height:21px}
+.pcard-name{font-family:'Fredoka',sans-serif;font-size:21px;font-weight:600;letter-spacing:-.005em;color:var(--ink)}
+.pcard-promise{font-size:12.5px;color:var(--ink-mute);margin-top:9px;line-height:1.65}
 
-.pcard-price{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.price-original{font-size:13px;color:var(--gray);text-decoration:line-through}
-.price-discount{background:rgba(34,197,94,.12);color:var(--green);font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px}
-.price-value{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--white)}
-.price-period{font-size:12px;color:var(--gray)}
-.price-total-row{margin-top:8px;font-size:12px;color:var(--gray)}
-.price-total-row strong{color:var(--lgray)}
+.pcard-price{padding:22px 28px;border-bottom:1px solid var(--line-soft)}
+.price-label{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:8px}
+.price-main{display:flex;align-items:baseline;gap:7px}
+.price-value{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--ink)}
+.price-period{font-size:12px;color:var(--ink-mute)}
+.price-total-row{margin-top:9px;font-size:12px;color:var(--ink-mute)}
+.price-total-row strong{color:var(--ink-soft);font-weight:600}
+.price-note{
+  display:inline-flex;align-items:center;gap:5px;margin-top:12px;
+  font-size:10.5px;font-weight:600;color:var(--red-deep);
+  background:var(--red-glow-soft);border-radius:14px;padding:4px 10px 4px 8px;
+}
+.price-note .dot{width:5px;height:5px;border-radius:50%;background:var(--red)}
 
-.pcard-body{padding:20px 28px;flex:1;display:flex;flex-direction:column;gap:20px}
-.benefit-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
-.benefit-list{display:flex;flex-direction:column;gap:7px}
-.benefit-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--lgray)}
-.bi-icon{color:var(--green);font-size:14px;margin-top:1px;flex-shrink:0}
-.pcard-additional{background:rgba(255,255,255,.03);border-radius:6px;padding:12px 14px}
-.add-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px}
+.pcard-body{padding:22px 28px;flex:1;display:flex;flex-direction:column;gap:20px}
+.benefit-title{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:11px}
+.benefit-list{display:flex;flex-direction:column;gap:9px}
+.benefit-item{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--ink-soft);line-height:1.4}
+.bi-icon{flex-shrink:0;margin-top:2px;width:13px;height:13px}
+.pcard-additional{background:var(--cream-2);border-radius:8px;padding:13px 15px}
+.add-label{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:8px}
 .add-chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font-size:11px;background:var(--border);color:var(--lgray);padding:3px 10px;border-radius:3px}
-.guarantee{font-size:12px;color:var(--gray);border-top:1px solid var(--border);padding-top:12px;display:flex;align-items:center;gap:6px}
-.guarantee span{color:var(--red)}
+.chip{font-size:11px;background:var(--paper);border:1px solid var(--line);color:var(--ink-soft);padding:4px 11px;border-radius:20px}
+.guarantee{font-size:11.5px;color:var(--ink-mute);border-top:1px solid var(--line-soft);padding-top:13px;display:flex;align-items:center;gap:7px}
+.guarantee svg{width:12px;height:12px;flex-shrink:0}
 
-.pcard-footer{padding:20px 28px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
-.btn-card{display:block;text-align:center;font-weight:700;font-size:13px;padding:12px;border-radius:var(--r);transition:background .2s,border-color .2s}
-.btn-card-primary{background:var(--red);color:#fff}
-.btn-card-primary:hover{background:var(--red-dim)}
-.btn-card-ghost{border:1px solid var(--border);color:var(--gray);font-size:12px}
-.btn-card-ghost:hover{border-color:var(--gray);color:var(--lgray)}
+.pcard-footer{padding:22px 28px;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:10px;position:relative;z-index:2}
+.btn-card{display:block;text-align:center;font-weight:600;font-size:13px;padding:13px;border-radius:var(--r);transition:background .25s var(--ease),border-color .25s var(--ease),transform .2s var(--ease)}
+.btn-card-primary{background:var(--red);color:#fff;box-shadow:0 10px 22px -8px var(--red-glow)}
+.btn-card-primary:hover{background:var(--red-deep);transform:translateY(-1px)}
+.btn-card-ghost{border:1.5px solid var(--line);color:var(--ink-soft);font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-card-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn-card-ghost svg{width:12px;height:12px}
 
-/* ─── MOCKUP PREVIEWS ──────────────────────────────────────── */
-#demos{background:var(--dark);border-top:1px solid var(--border)}
-#demos section{max-width:1100px;margin:0 auto}
+/* ─── PREVIEW MODAL (nuevo) ────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(23,23,26,.55);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:32px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s var(--ease);
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.site-modal{
+  background:var(--paper);border-radius:18px;max-width:920px;width:100%;
+  max-height:88vh;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 60px 120px -30px rgba(23,23,26,.4), 0 0 0 1px var(--line);
+  transform:scale(.94) translateY(12px);opacity:0;
+  transition:transform .35s var(--ease), opacity .35s var(--ease);
+}
+.modal-overlay.open .site-modal{transform:scale(1) translateY(0);opacity:1}
+
+.modal-browser-bar{
+  background:var(--cream-2);padding:12px 16px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.modal-url{
+  flex:1;background:var(--paper);border:1px solid var(--line-soft);border-radius:6px;
+  padding:6px 12px;font-size:11px;color:var(--ink-mute);font-family:monospace;
+  display:flex;align-items:center;gap:6px;
+}
+.modal-url .fav{width:8px;height:8px;border-radius:2px;background:var(--red);flex-shrink:0}
+.modal-close{
+  width:28px;height:28px;border-radius:50%;background:var(--paper);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .2s var(--ease), border-color .2s var(--ease);
+}
+.modal-close:hover{background:var(--red);border-color:var(--red)}
+.modal-close:hover svg path{stroke:#fff}
+.modal-close svg{width:12px;height:12px}
+
+.modal-scroll{overflow-y:auto}
+.modal-preview-note{
+  padding:9px 24px;background:var(--cream);border-bottom:1px solid var(--line-soft);
+  font-size:11px;color:var(--ink-mute);text-align:center;flex-shrink:0;
+}
+.mock-site{padding:36px 40px;background:var(--paper)}
+
+/* variante Landing dentro del modal */
+.mock-site-nav{display:flex;align-items:center;justify-content:space-between;padding-bottom:24px;margin-bottom:32px;border-bottom:1px solid var(--line-soft)}
+.mock-site-logo{display:flex;align-items:center;gap:8px}
+.mock-site-logo .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--ink)}
+.mock-site-logo .bar{width:64px;height:9px;border-radius:3px;background:var(--ink)}
+.mock-site-links{display:flex;gap:16px}
+.mock-site-links span{width:34px;height:7px;border-radius:3px;background:var(--line)}
+.mock-hero-big{text-align:center;padding:20px 0 36px}
+.mock-hero-big .l1{width:70%;height:26px;margin:0 auto 12px;border-radius:6px;background:var(--cream-2)}
+.mock-hero-big .l2{width:50%;height:26px;margin:0 auto 18px;border-radius:6px;background:linear-gradient(135deg,var(--red-glow) 0%,var(--red-glow-soft) 100%)}
+.mock-hero-big .l3{width:60%;height:11px;margin:0 auto 8px;border-radius:4px;background:var(--line-soft)}
+.mock-hero-big .l4{width:44%;height:11px;margin:0 auto 22px;border-radius:4px;background:var(--line-soft)}
+.mock-hero-big .cta{width:160px;height:40px;margin:0 auto;border-radius:9px;background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%)}
+
+/* variante Vitrina: grid de productos */
+.mock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+.mock-prod{background:var(--cream);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
+.mock-prod .thumb{height:80px;background:linear-gradient(135deg,var(--cream-2) 0%,var(--line-soft) 100%)}
+.mock-prod .info{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.mock-prod .name{width:70%;height:8px;border-radius:3px;background:var(--ink-mute);opacity:.35}
+.mock-prod .price{width:40%;height:9px;border-radius:3px;background:var(--red);opacity:.75}
+
+/* variante Tienda: sidebar + grid */
+.mock-shop{display:grid;grid-template-columns:170px 1fr;gap:24px}
+.mock-sidebar{display:flex;flex-direction:column;gap:10px}
+.mock-sidebar .sb-title{width:60%;height:9px;border-radius:3px;background:var(--ink);opacity:.7;margin-bottom:6px}
+.mock-sidebar .sb-item{height:10px;border-radius:3px;background:var(--line-soft)}
+.mock-sidebar .sb-item.active{background:var(--red-glow);width:80%}
+.mock-cart-strip{margin-top:20px;padding:12px;border-radius:9px;background:var(--cream-2);display:flex;align-items:center;gap:8px}
+.mock-cart-strip svg{width:16px;height:16px;flex-shrink:0}
+.mock-cart-strip .txt{flex:1;height:8px;border-radius:3px;background:var(--line-soft)}
+
+.mock-fab-col{position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:3}
+.mock-fab{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(23,23,26,.18)}
+.mock-fab svg{width:14px;height:14px}
+.fab-wa{background:#25D366}
+.fab-cart{background:var(--red)}
+
+.modal-summary{
+  padding:22px 28px;border-top:1px solid var(--line-soft);flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  background:var(--cream);
+}
+.modal-summary-info{}
+.modal-summary-name{font-family:'Fredoka',sans-serif;font-size:16px;font-weight:600;color:var(--ink)}
+.modal-summary-price{font-size:13px;color:var(--ink-mute);margin-top:2px}
+.modal-summary-price strong{color:var(--ink);font-weight:700}
+.modal-summary-actions{display:flex;gap:10px}
+.modal-summary-actions .btn-card{padding:11px 22px;white-space:nowrap}
+
+/* ── contenido enriquecido de los mocks por tipo de producto ── */
+.mock-site-logo .txt{font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;color:var(--ink)}
+
+/* Landing: hero con copy real */
+.mock-hero-real{text-align:center;padding:8px 0 40px}
+.mock-eyebrow-mini{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--red-deep);margin-bottom:10px}
+.mock-h1-real{font-family:'Fredoka',sans-serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:10px}
+.mock-p-real{font-size:12.5px;color:var(--ink-mute);max-width:340px;margin:0 auto 20px;line-height:1.6}
+.mock-cta-real{
+  display:inline-flex;background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);
+  color:#fff;font-size:12px;font-weight:600;padding:11px 26px;border-radius:9px;
+}
+.mock-section-label{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin:28px 0 14px}
+.mock-services-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.service-mini{background:var(--cream-2);border-radius:10px;padding:16px 14px;text-align:center}
+.service-mini .ic{width:30px;height:30px;border-radius:8px;background:var(--paper);margin:0 auto 10px;display:flex;align-items:center;justify-content:center}
+.service-mini .ic svg{width:14px;height:14px}
+.service-mini .t{font-size:11.5px;font-weight:600;color:var(--ink)}
+.service-mini .d{font-size:10px;color:var(--ink-mute);margin-top:3px;line-height:1.4}
+.mock-testimonial{background:var(--cream-2);border-radius:10px;padding:18px 20px;margin-top:8px;position:relative}
+.mock-testimonial .stars{display:flex;gap:2px;margin-bottom:8px}
+.mock-testimonial .stars svg{width:11px;height:11px}
+.mock-testimonial .q{font-size:11.5px;color:var(--ink-soft);font-style:italic;line-height:1.6}
+.mock-testimonial .a{font-size:10.5px;color:var(--ink-mute);margin-top:8px;font-weight:600}
+.mock-contact-row{display:flex;align-items:center;gap:14px;background:var(--ink);border-radius:10px;padding:16px 20px;margin-top:8px;flex-wrap:wrap}
+.mock-contact-row .txt{flex:1;min-width:160px}
+.mock-contact-row .txt .t{color:#fff;font-size:12px;font-weight:600}
+.mock-contact-row .txt .d{color:#B8B6AE;font-size:10.5px;margin-top:2px}
+.mock-contact-row .btn{background:#25D366;color:#fff;font-size:11px;font-weight:600;padding:9px 16px;border-radius:7px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.mock-contact-row .btn svg{width:13px;height:13px}
+
+/* Vitrina: tabs + carrusel + productos reales */
+.mock-tabs{display:flex;gap:8px;margin-bottom:18px}
+.mock-tab{font-size:11px;font-weight:600;padding:7px 16px;border-radius:20px;background:var(--cream-2);color:var(--ink-mute)}
+.mock-tab.active{background:var(--ink);color:#fff}
+.mock-carousel{
+  display:flex;align-items:center;gap:16px;background:linear-gradient(120deg,var(--cream-2) 0%,#fff 100%);
+  border:1px solid var(--line-soft);border-radius:12px;padding:18px 22px;margin-bottom:22px;
+}
+.mock-carousel .badge{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-deep);background:var(--red-glow-soft);padding:3px 10px;border-radius:12px;display:inline-block;margin-bottom:6px}
+.mock-carousel .t{font-family:'Fredoka',sans-serif;font-size:15px;font-weight:600;color:var(--ink)}
+.mock-carousel .d{font-size:11px;color:var(--ink-mute);margin-top:3px}
+.mock-carousel .thumb{width:64px;height:64px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--line-soft),var(--cream-2))}
+.mock-prod-real{background:var(--paper);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden;transition:box-shadow .2s var(--ease)}
+.mock-prod-real .thumb{height:76px;background:linear-gradient(135deg,var(--cream-2) 0%,var(--line-soft) 100%);position:relative}
+.mock-prod-real .thumb .tag{position:absolute;top:6px;left:6px;font-size:8px;font-weight:700;background:var(--red);color:#fff;padding:2px 6px;border-radius:4px;border:none}
+.mock-prod-real .info{padding:9px 10px}
+.mock-prod-real .name{font-size:10.5px;font-weight:600;color:var(--ink);line-height:1.3}
+.mock-prod-real .price{font-size:11px;font-weight:700;color:var(--red-deep);margin-top:3px}
+.mock-order-form{margin-top:22px;background:var(--cream-2);border-radius:10px;padding:16px 18px}
+.mock-order-form .t{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:10px}
+.mock-order-form .fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.mock-order-form .field{background:var(--paper);border:1px solid var(--line);border-radius:6px;height:30px;display:flex;align-items:center;padding:0 10px;font-size:9.5px;color:var(--ink-mute)}
+.mock-order-form .btn{background:#25D366;color:#fff;font-size:11px;font-weight:600;padding:9px 0;border-radius:7px;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
+.mock-order-form .btn svg{width:13px;height:13px}
+
+/* Tienda: categorías reales + banner lateral + popup */
+.mock-topbanner{background:linear-gradient(120deg,var(--ink) 0%,#2b2b2e 100%);border-radius:10px;padding:12px 18px;margin-bottom:18px;text-align:center}
+.mock-topbanner .t{color:#fff;font-size:11.5px;font-weight:600}
+.mock-topbanner .t em{color:#ff8a84;font-style:normal}
+.mock-cat-real{font-size:11px;color:var(--ink-soft);padding:7px 8px;border-radius:6px;display:flex;justify-content:space-between}
+.mock-cat-real.active{background:var(--red-glow-soft);color:var(--red-deep);font-weight:600}
+.mock-cat-real .n{font-size:9px;color:var(--ink-mute)}
+.mock-side-banner{
+  margin-top:14px;background:linear-gradient(160deg,var(--red) 0%,var(--burgundy) 100%);
+  border-radius:10px;padding:16px 14px;color:#fff;
+}
+.mock-side-banner .t{font-size:11.5px;font-weight:700;line-height:1.3}
+.mock-side-banner .d{font-size:9.5px;opacity:.85;margin-top:6px;line-height:1.4}
+.mock-popup{
+  position:absolute;top:14px;right:14px;width:180px;background:var(--paper);
+  border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 20px 40px -14px rgba(23,23,26,.25);
+  z-index:4;
+}
+.mock-popup .close{position:absolute;top:8px;right:8px;width:14px;height:14px;opacity:.5}
+.mock-popup .t{font-family:'Fredoka',sans-serif;font-size:12px;font-weight:600;color:var(--ink)}
+.mock-popup .d{font-size:9.5px;color:var(--ink-mute);margin-top:4px;line-height:1.4}
+.mock-popup .btn{margin-top:10px;background:var(--red);color:#fff;font-size:9.5px;font-weight:600;padding:6px 0;border-radius:6px;text-align:center}
+
+/* ─── DEMOS ────────────────────────────────────────────────── */
+#demos{background:var(--cream-2);border-top:1px solid var(--line-soft);position:relative}
+#demos section{max-width:1140px;margin:0 auto;padding:110px 40px}
 .demos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:48px}
-.demo-card{background:var(--black);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .25s}
-.demo-card:hover{border-color:var(--red)}
-.demo-top{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.demo-top-name{font-weight:700;font-size:13px}
-.demo-preview{height:200px;position:relative;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
-.demo-preview-nav{width:100%;background:#1e1e1e;padding:6px 12px;display:flex;align-items:center;gap:6px;position:absolute;top:0}
+.demo-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  cursor:pointer;box-shadow:0 4px 14px rgba(23,23,26,.05);
+  transition:box-shadow .35s var(--ease), transform .3s var(--ease), border-color .3s var(--ease);
+  opacity:0;transform:translateY(18px);
+}
+.demo-card.in-view{opacity:1;transform:translateY(0)}
+.demo-card:nth-child(2){transition-delay:.08s}
+.demo-card:nth-child(3){transition-delay:.16s}
+.demo-card:hover{transform:translateY(-5px);border-color:rgba(228,35,28,.3);box-shadow:0 26px 50px -20px rgba(23,23,26,.16),0 12px 26px -12px var(--red-glow)}
+.demo-top{padding:16px 20px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;justify-content:space-between}
+.demo-top-name{font-weight:600;font-size:13px;color:var(--ink)}
+.demo-top-tag{font-size:10px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.06em}
+.demo-preview{height:190px;position:relative;overflow:hidden;background:var(--cream)}
+.demo-preview-nav{width:100%;background:var(--paper);padding:7px 12px;display:flex;align-items:center;gap:6px;position:absolute;top:0;border-bottom:1px solid var(--line-soft)}
 .demo-dots{display:flex;gap:4px}
-.demo-dot{width:7px;height:7px;border-radius:50%}
-.demo-url{flex:1;background:#2a2a2a;height:14px;border-radius:2px;margin-left:4px}
-.demo-content{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:20px}
-.demo-h{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--white)}
-.demo-p{font-size:10px;color:var(--gray)}
-.demo-btn{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:5px 14px;border-radius:3px}
-/* layout variations */
-.demo-lp .demo-preview{background:linear-gradient(135deg,#111 60%,rgba(204,0,0,.08))}
-.demo-vo .demo-preview{flex-direction:column}
-.demo-vo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;margin-top:28px;width:92%}
-.demo-vo-item{background:#2a2a2a;border-radius:3px;height:40px}
-.demo-to .demo-preview{background:#0e0e0e}
-.demo-to-sidebar{position:absolute;left:0;top:24px;bottom:0;width:28%;background:#1a1a1a;border-right:1px solid #2e2e2e;padding:8px;display:flex;flex-direction:column;gap:4px}
-.demo-to-sb-item{height:8px;background:#2e2e2e;border-radius:2px}
-.demo-to-main{position:absolute;right:0;top:24px;bottom:0;left:28%;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px}
-.demo-to-prod{background:#1e1e1e;border-radius:3px;height:100%}
-.demo-link{display:block;padding:10px 20px;font-size:12px;color:var(--gray);border-top:1px solid var(--border);text-align:center;transition:color .2s}
-.demo-link:hover{color:var(--red)}
+.demo-dot{width:6px;height:6px;border-radius:50%}
+.demo-url-mini{flex:1;background:var(--cream-2);height:12px;border-radius:3px;margin-left:4px}
+.demo-content{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:44px}
+.demo-h{font-family:'Fredoka',sans-serif;font-size:15px;font-weight:600;color:var(--ink)}
+.demo-p{font-size:10px;color:var(--ink-mute)}
+.demo-btn-mini{background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:6px 16px;border-radius:6px}
+.demo-vo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:5px;margin-top:36px;width:90%}
+.demo-vo-item{background:var(--cream-2);border-radius:4px;height:38px;border:1px solid var(--line-soft)}
+.demo-to-sidebar{position:absolute;left:0;top:26px;bottom:0;width:26%;background:var(--paper);border-right:1px solid var(--line-soft);padding:10px 8px;display:flex;flex-direction:column;gap:5px}
+.demo-to-sb-item{height:7px;background:var(--line-soft);border-radius:2px}
+.demo-to-main{position:absolute;right:0;top:26px;bottom:0;left:26%;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.demo-to-prod{background:var(--cream-2);border-radius:4px;height:100%;border:1px solid var(--line-soft)}
+.demo-link{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 20px;font-size:12px;font-weight:500;color:var(--ink-mute);
+  border-top:1px solid var(--line-soft);transition:color .2s var(--ease);
+}
+.demo-link svg{width:11px;height:11px}
+.demo-card:hover .demo-link{color:var(--red-deep)}
 
 /* ─── WHY RESET ────────────────────────────────────────────── */
-#por-que{background:var(--black)}
-.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px}
-.why-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:28px 24px}
-.why-icon{font-size:26px;margin-bottom:16px}
-.why-title{font-weight:700;font-size:14px;color:var(--white);margin-bottom:8px}
-.why-desc{font-size:13px;color:var(--gray);line-height:1.6}
+#por-que{position:relative}
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px}
+.why-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:30px 24px;
+  box-shadow:0 4px 14px rgba(23,23,26,.04);
+  transition:box-shadow .3s var(--ease), transform .3s var(--ease);
+  opacity:0;transform:translateY(18px);
+}
+.why-card.in-view{opacity:1;transform:translateY(0)}
+.why-card:nth-child(2){transition-delay:.06s}
+.why-card:nth-child(3){transition-delay:.12s}
+.why-card:nth-child(4){transition-delay:.18s}
+.why-card:hover{transform:translateY(-4px);box-shadow:0 24px 46px -20px rgba(23,23,26,.14),0 10px 22px -12px var(--red-glow)}
+.why-icon{
+  width:44px;height:44px;border-radius:12px;background:var(--cream-2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  transition:background .3s var(--ease);
+}
+.why-card:hover .why-icon{background:var(--red-glow-soft)}
+.why-icon svg{width:20px;height:20px}
+.why-icon svg path,.why-icon svg line,.why-icon svg circle,.why-icon svg rect{transition:stroke .3s var(--ease)}
+.why-card:hover .why-icon svg path,.why-card:hover .why-icon svg line,.why-card:hover .why-icon svg circle,.why-card:hover .why-icon svg rect{stroke:var(--red)}
+.why-title{font-weight:600;font-size:14.5px;color:var(--ink);margin-bottom:8px;font-family:'Inter',sans-serif}
+.why-desc{font-size:12.5px;color:var(--ink-mute);line-height:1.65}
 
 /* ─── PROCESS ──────────────────────────────────────────────── */
-#proceso{background:var(--dark);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
-.process-steps::before{content:'';position:absolute;top:24px;left:12.5%;right:12.5%;height:1px;background:var(--border);z-index:0}
-.step{text-align:center;position:relative;z-index:1}
-.step-num{width:48px;height:48px;background:var(--black);border:2px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--red);margin:0 auto 16px}
-.step-title{font-weight:700;font-size:13px;margin-bottom:6px}
-.step-desc{font-size:12px;color:var(--gray);line-height:1.5;padding:0 10px}
+#proceso{background:var(--cream-2);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+#proceso section{padding:110px 40px}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;position:relative}
+.process-steps::before{
+  content:'';position:absolute;top:26px;left:12.5%;right:12.5%;height:2px;z-index:0;
+  background:linear-gradient(90deg,var(--red) 0%,var(--line) 100%);
+}
+.step{text-align:center;position:relative;z-index:1;opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.step.in-view{opacity:1;transform:translateY(0)}
+.step:nth-child(2){transition-delay:.1s}
+.step:nth-child(3){transition-delay:.2s}
+.step:nth-child(4){transition-delay:.3s}
+.step-num{
+  width:52px;height:52px;background:var(--paper);border:2px solid var(--red);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--ink);margin:0 auto 18px;
+  box-shadow:0 10px 24px -10px var(--red-glow);position:relative;
+}
+.step-num .tick{width:2.4px;height:9px;background:var(--red);border-radius:2px;position:absolute;top:-6px}
+.step-title{font-weight:600;font-size:13.5px;margin-bottom:7px;color:var(--ink)}
+.step-desc{font-size:12px;color:var(--ink-mute);line-height:1.6;padding:0 12px}
 
 /* ─── CTA ──────────────────────────────────────────────────── */
-#contacto{background:var(--black)}
-.cta-box{background:var(--dark);border:1px solid var(--border);border-radius:16px;padding:64px 48px;text-align:center;position:relative;overflow:hidden;max-width:760px;margin:0 auto}
-.cta-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(204,0,0,.12) 0%,transparent 70%);pointer-events:none}
-.cta-box h2{font-family:'Syne',sans-serif;font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
-.cta-box p{color:var(--gray);font-size:15px;max-width:480px;margin:0 auto 36px}
-.cta-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.btn-wa{background:#25D366;color:#fff;font-weight:700;font-size:14px;padding:14px 28px;border-radius:var(--r);display:flex;align-items:center;gap:8px;transition:opacity .2s}
-.btn-wa:hover{opacity:.88}
+#contacto{padding:110px 40px}
+.cta-box{
+  background:var(--ink);border-radius:24px;padding:72px 48px;text-align:center;
+  position:relative;overflow:hidden;max-width:780px;margin:0 auto;
+}
+.cta-watermark{position:absolute;top:50%;left:50%;width:520px;height:520px;transform:translate(-50%,-50%);opacity:.06;pointer-events:none}
+.cta-box .tag{background:rgba(228,35,28,.14);border-color:rgba(228,35,28,.3);color:#ff8a84;position:relative;z-index:1}
+.cta-box h2{
+  font-family:'Fredoka',sans-serif;font-size:clamp(26px,3.2vw,40px);font-weight:600;
+  letter-spacing:-.01em;margin-bottom:18px;color:var(--cream);position:relative;z-index:1;
+}
+.cta-box p{color:#B8B6AE;font-size:15px;max-width:480px;margin:0 auto 38px;position:relative;z-index:1;line-height:1.7}
+.cta-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.btn-wa{
+  background:#25D366;color:#fff;font-weight:600;font-size:14px;padding:15px 30px;border-radius:var(--r);
+  display:flex;align-items:center;gap:9px;transition:transform .2s var(--ease),box-shadow .2s var(--ease);
+  box-shadow:0 14px 30px -10px rgba(37,211,102,.35);
+}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 20px 38px -10px rgba(37,211,102,.4)}
+.btn-wa svg{width:17px;height:17px}
+.cta-box .btn-primary{position:relative;z-index:1}
+.cta-payment-note{font-size:12px;color:#8B8983;margin-top:28px;position:relative;z-index:1}
 
 /* ─── FOOTER ───────────────────────────────────────────────── */
-footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40px 24px}
-.footer-inner{max-width:1100px;margin:0 auto}
-.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap;padding-bottom:32px;border-bottom:1px solid var(--border)}
-.footer-brand{}
-.footer-wordmark{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
-.footer-wordmark span{color:var(--red)}
-.footer-tagline{font-size:12px;color:var(--gray);margin-top:6px}
-.footer-links{display:flex;gap:48px;flex-wrap:wrap}
-.footer-col h4{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:12px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-.footer-col ul a{font-size:13px;color:var(--gray);transition:color .2s}
-.footer-col ul a:hover{color:var(--white)}
-.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:8px}
-.footer-red-bar{width:100%;height:3px;background:var(--red);border-radius:2px;margin-bottom:32px}
+footer{background:var(--cream-2);border-top:1px solid var(--line-soft);padding:56px 40px 26px}
+.footer-inner{max-width:1140px;margin:0 auto}
+.footer-red-bar{width:100%;height:2px;background:linear-gradient(90deg,var(--red) 0%,var(--burgundy) 60%,transparent 100%);border-radius:2px;margin-bottom:40px}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap;padding-bottom:36px;border-bottom:1px solid var(--line)}
+.footer-brand{display:flex;flex-direction:column;gap:12px}
+.footer-brand-row{display:flex;align-items:center;gap:10px}
+.footer-wordmark{font-size:20px}
+.footer-tagline{font-size:12px;color:var(--ink-mute);line-height:1.6}
+.footer-links{display:flex;gap:52px;flex-wrap:wrap}
+.footer-col h4{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:14px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-col ul a{font-size:13px;color:var(--ink-soft);transition:color .2s var(--ease)}
+.footer-col ul a:hover{color:var(--red-deep)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:22px;font-size:12px;color:var(--ink-mute);flex-wrap:wrap;gap:8px}
 
-/* ─── RESPONSIVE ───────────────────────────────────────────── */
+/* ─── RESPONSIVE (base — se irá ampliando por sección) ───────── */
+@media(max-width:980px){
+  .products-grid{grid-template-columns:1fr;max-width:520px}
+  .why-grid{grid-template-columns:1fr 1fr}
+  .process-steps{grid-template-columns:1fr 1fr;gap:36px 0}
+  .process-steps::before{display:none}
+  .demos-grid{grid-template-columns:1fr;max-width:480px;margin-left:auto;margin-right:auto}
+}
 @media(max-width:900px){
   nav ul,nav .nav-cta{display:none}
   .hero-grid{grid-template-columns:1fr}
   .hero-visual{display:none}
-  #nosotros-band section{grid-template-columns:1fr}
-  .products-grid,.demos-grid,.why-grid,.process-steps{grid-template-columns:1fr}
-  .process-steps::before{display:none}
+  #inicio{padding:110px 20px 60px}
+  .hero-stats{flex-wrap:wrap;row-gap:20px}
+  #nosotros-band section{grid-template-columns:1fr;gap:44px;padding:70px 20px}
+  section{padding:70px 20px}
+  .products-intro{padding:70px 20px 36px}
+  .products-grid,.demos-grid{padding-left:20px;padding-right:20px}
+  #demos section,#proceso section{padding:70px 20px}
+  .why-grid{grid-template-columns:1fr}
+  .mock-shop{grid-template-columns:1fr}
+  .mock-sidebar{flex-direction:row;flex-wrap:wrap}
+  .mock-services-row{grid-template-columns:1fr}
+  .mock-order-form .fields{grid-template-columns:1fr}
+  .mock-tabs{flex-wrap:wrap}
+  .mock-popup{display:none}
+  .mock-contact-row{flex-direction:column;align-items:flex-start}
+  .modal-overlay{padding:14px}
+  .site-modal{max-height:92vh}
+  .mock-site{padding:24px 20px}
+  .modal-summary{flex-direction:column;align-items:stretch;text-align:center}
+  .cta-box{padding:52px 26px}
   .footer-top{flex-direction:column}
-  section{padding:60px 20px}
-  .products-grid,.demos-grid{padding:0 20px 60px}
+  .footer-links{gap:36px}
 }
 </style>
 </head>
 <body>
 
+<!-- watermark grande de marca detrás del hero -->
+<!-- Logo real de marca — definido una sola vez, reutilizado con <use> -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+  <defs>
+    <linearGradient id="logoBlack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b3b3b"/>
+      <stop offset="1" stop-color="#1e1e1e"/>
+    </linearGradient>
+    <linearGradient id="logoRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff2432"/>
+      <stop offset="1" stop-color="#e91526"/>
+    </linearGradient>
+    <symbol id="logo-r-icon" viewBox="0 0 420 420">
+      <circle cx="210" cy="210" r="190" fill="none" stroke="#303030" stroke-width="18"/>
+      <path fill="url(#logoBlack)" d="M104 340V178c0-58 47-105 105-105 59 0 107 48 107 107 0 33-15 62-39 82l48 74c7 12 4 27-8 35-12 8-27 4-35-8l-51-79c-7 1-14 2-22 2-25 0-48-9-67-23v77c0 14-8 24-20 27-10 3-18 1-25-5-9-7-13-14-13-22Zm38-160c0 37 30 67 67 67s67-30 67-67-30-67-67-67-67 30-67 67Z"/>
+      <path fill="url(#logoRed)" d="M188 53c0-15 10-25 23-25h3c14 0 24 10 24 25v91c0 15-10 25-24 25h-3c-13 0-23-10-23-25V53Z"/>
+      <path d="M207 39c12 0 20 4 23 13 2 7 2 17 2 28" fill="none" stroke="#ff5e67" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+    </symbol>
+  </defs>
+</svg>
+
+<svg class="brand-watermark" style="top:-60px;right:-120px;width:640px;height:640px" viewBox="0 0 420 420" aria-hidden="true"><use href="#logo-r-icon"/></svg>
+
 <!-- ── NAV ──────────────────────────────────────────────────── -->
 <nav>
   <div class="nav-logo">
-    <div class="nav-logo-icon"></div>
-    <div class="nav-wordmark"><span>R</span>eset</div>
+    <svg class="logo-mark" width="38" height="38" viewBox="0 0 420 420" aria-hidden="true"><use href="#logo-r-icon"/></svg>
+    <div class="wordmark nav-wordmark"><span class="rmark">R</span>eset</div>
   </div>
   <ul>
     <li><a href="#inicio">Inicio</a></li>
@@ -252,27 +795,31 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40
   <div class="hero-grid">
     <div>
       <div class="hero-eyebrow">Soluciones Digitales · Bogotá, Colombia</div>
-      <h1 class="hero-h1">Tu negocio,<br/><em>visible</em> en<br/>la web.</h1>
+      <h1 class="hero-h1">Tu negocio,<br/>
+        <span class="hl">visible
+          <svg viewBox="0 0 220 20" preserveAspectRatio="none"><path d="M2 12 C 40 4, 80 4, 110 10 S 180 18, 218 8"/></svg>
+        </span> en<br/>la web.</h1>
       <p class="hero-sub">Potenciamos y posicionamos marcas comerciales en el mercado digital. Herramientas web que hacen crecer tus canales de venta, comunicación y recaudo.</p>
       <div class="hero-actions">
         <a class="btn-primary" href="#productos-wrap">Ver planes</a>
         <a class="btn-ghost" href="#demos">Ver demos</a>
       </div>
       <div class="hero-stats">
-        <div>
-          <div class="stat-num"><sup>+</sup>40<sup>%</sup></div>
-          <div class="stat-label">Descuento en todos<br/>los planes</div>
-        </div>
-        <div>
-          <div class="stat-num">3</div>
+        <div class="stat">
+          <div class="stat-num" data-count="3">0</div>
           <div class="stat-label">Planes para cada<br/>etapa de tu negocio</div>
         </div>
-        <div>
-          <div class="stat-num">15</div>
+        <div class="stat">
+          <div class="stat-num"><span class="accent">+</span><span data-count="15">0</span></div>
           <div class="stat-label">Días hábiles de<br/>entrega</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" data-count="100"><span class="accent"></span></div>
+          <div class="stat-label">% Responsive en<br/>todos los planes</div>
         </div>
       </div>
     </div>
+
     <div class="hero-visual">
       <div class="browser-chrome">
         <div class="browser-bar">
@@ -281,56 +828,85 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40
             <div class="dot dot-y"></div>
             <div class="dot dot-g"></div>
           </div>
-          <div class="browser-url">https://tu-negocio.com</div>
+          <div class="browser-url"><span class="fav"></span>tu-negocio.com</div>
         </div>
         <div class="browser-body">
-          <div class="browser-mocksite-label">Tu página web</div>
-          <div class="browser-mocksite-title">Tu Marca Aquí</div>
-          <div class="browser-mocksite-btn">Ver productos →</div>
+          <div class="mock-nav">
+            <div class="mock-logo"></div>
+            <div class="mock-links"><span></span><span></span><span></span></div>
+          </div>
+          <div class="mock-hero">
+            <div class="mock-line l1"></div>
+            <div class="mock-line l2"></div>
+            <div class="mock-line l3"></div>
+            <div class="mock-btn"></div>
+          </div>
+          <div class="mock-card-row">
+            <div class="mock-card"></div>
+            <div class="mock-card"></div>
+            <div class="mock-card"></div>
+          </div>
         </div>
       </div>
       <div class="floating-badge badge-top">
-        <strong>+40% OFF</strong>
-        Precio especial
+        <strong>Activo 24/7</strong>
+        Hosting incluido
       </div>
       <div class="floating-badge badge-bot">
-        <strong>✓ Activo 24/7</strong>
-        <span>Hosting incluido</span>
+        <strong>15 días</strong>
+        <span>de entrega estimada</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── MISSION / VISION / VALUES ────────────────────────────── -->
+<!-- ── MISIÓN / VISIÓN / VALORES ────────────────────────────── -->
 <div id="nosotros-band">
   <section>
-    <div class="mission-block">
-      <div class="mission-label">Misión</div>
-      <p class="mission-text">Potencializar y posicionar marcas comerciales en el mercado digital por medio de herramientas web que permitan el crecimiento de los canales de venta, comunicación y recaudo — protegiendo la información de tu negocio y facilitando el acceso de tus clientes desde cualquier lugar.</p>
+    <div class="mission-block reveal">
+      <div class="mission-label">
+        <svg class="ml-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        Misión
+      </div>
+      <p class="mission-text">Potencializar y posicionar marcas comerciales en el mercado digital por medio de herramientas web que permitan el crecimiento de los canales de venta, comunicación y recaudo — <em>protegiendo la información de tu negocio</em> y facilitando el acceso de tus clientes desde cualquier lugar.</p>
     </div>
-    <div class="mission-block">
-      <div class="mission-label">Visión</div>
-      <p class="mission-text">En 2029 seremos el mejor sitio de venta de productos digitales, excelentemente posicionados entre nuestros clientes y aliados en la ciudad de Bogotá.</p>
+
+    <div class="mission-block reveal">
+      <div class="mission-label">
+        <svg class="ml-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        Visión
+      </div>
+      <p class="mission-text">En 2029 seremos <em>el mejor sitio de venta de productos digitales</em>, excelentemente posicionados entre nuestros clientes y aliados en la ciudad de Bogotá.</p>
     </div>
-    <div class="mission-block">
-      <div class="mission-label">Valores</div>
+
+    <div class="mission-block reveal">
+      <div class="mission-label">
+        <svg class="ml-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        Valores
+      </div>
       <div class="values-list">
         <div class="value-item">
-          <div class="value-dot"></div>
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.4" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.8" stroke-linecap="round"/></svg>
+          </div>
           <div>
             <div class="value-name">Esfuerzo</div>
             <div class="value-desc">Trabajamos en equipo enfocados en alcanzar cada objetivo.</div>
           </div>
         </div>
         <div class="value-item">
-          <div class="value-dot"></div>
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.4" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.8" stroke-linecap="round"/></svg>
+          </div>
           <div>
             <div class="value-name">Servicio</div>
             <div class="value-desc">Generamos experiencias positivas en cada área de la compañía.</div>
           </div>
         </div>
         <div class="value-item">
-          <div class="value-dot"></div>
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.4" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.8" stroke-linecap="round"/></svg>
+          </div>
           <div>
             <div class="value-name">Efectividad</div>
             <div class="value-desc">Llegamos a las metas siendo eficientes con los recursos y procesos.</div>
@@ -341,347 +917,551 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40
   </section>
 </div>
 
-<!-- ── PRODUCTS ──────────────────────────────────────────────── -->
+<!-- ── PRODUCTOS ─────────────────────────────────────────────── -->
 <div id="productos-wrap">
   <div class="products-intro">
-    <div class="tag">Planes y Precios</div>
-    <div class="red-line" style="margin:14px auto 0"></div>
+    <div class="tag"><span class="tag-dot"></span>Planes y precios</div>
+    <div class="accent-arc" style="margin-left:auto;margin-right:auto"></div>
     <h2 class="section-h2">Elige el plan que impulsa<br/>tu negocio</h2>
-    <p class="section-sub">Todos los planes incluyen dominio, hosting y línea WhatsApp. Descuento del 40% aplicado en los precios mostrados.</p>
+    <p class="section-sub">Todos los planes incluyen dominio, hosting y línea WhatsApp. Haz clic en cualquier plan para ver cómo se vería tu sitio.</p>
   </div>
 
   <div class="products-grid">
 
     <!-- LANDING PAGE -->
-    <div class="pcard">
+    <div class="pcard reveal" data-modal="landing" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver vista previa del plan Landing Page">
+      <button class="pcard-expand" data-modal-open="landing" aria-label="Expandir vista previa" tabindex="-1">
+        <svg viewBox="0 0 24 24" fill="none"><polyline points="15 3 21 3 21 9" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 21 3 21 3 15" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="3" x2="14" y2="10" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="21" x2="10" y2="14" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
       <div class="pcard-header">
-        <div class="pcard-icon">🎯</div>
+        <div class="pcard-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--red)" stroke-width="1.6"/><circle cx="12" cy="12" r="5" stroke="var(--red)" stroke-width="1.6"/><circle cx="12" cy="12" r="1.3" fill="var(--red)"/></svg>
+        </div>
         <div class="pcard-name">Landing Page</div>
-        <div class="pcard-promise">Convierte visitas en leads. Cuenta con una oferta clara y CTA directo. Ideal para profesionales independientes. Adaptable a todos los dispositivos.</div>
+        <div class="pcard-promise">Convierte visitas en leads. Oferta clara y CTA directo. Ideal para profesionales independientes. Adaptable a todos los dispositivos.</div>
       </div>
       <div class="pcard-price">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span class="price-original">$1.000.000</span>
-            <span class="price-discount">−40%</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:6px">
-            <span class="price-value">$600.000</span>
-            <span class="price-period">diseño web</span>
-          </div>
-          <div class="price-total-row">Hosting + Dominio: <strong>$200.000</strong> · Total: <strong>$800.000</strong></div>
+        <div class="price-label">Inversión del proyecto</div>
+        <div class="price-main">
+          <span class="price-value">$600.000</span>
+          <span class="price-period">diseño web</span>
         </div>
+        <div class="price-total-row">Hosting + Dominio: <strong>$200.000</strong> · Total: <strong>$800.000</strong></div>
+        <div class="price-note"><span class="dot"></span>Cupo limitado este mes</div>
       </div>
       <div class="pcard-body">
         <div>
           <div class="benefit-title">Incluye</div>
           <div class="benefit-list">
-            <div class="benefit-item"><span class="bi-icon">✓</span>5 categorías de contenido</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>20 GB de espacio por 1 año</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Diseño personalizado</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Botón flotante WhatsApp</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Informativa — no transaccional</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>5 categorías de contenido</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>20 GB de espacio por 1 año</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Diseño personalizado</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Botón flotante WhatsApp</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Informativa — no transaccional</div>
           </div>
         </div>
         <div class="pcard-additional">
           <div class="add-label">Adicionales</div>
-          <div class="add-chips">
-            <span class="chip">Dominio</span>
-            <span class="chip">Hosting</span>
-            <span class="chip">Línea WhatsApp</span>
-          </div>
+          <div class="add-chips"><span class="chip">Dominio</span><span class="chip">Hosting</span><span class="chip">Línea WhatsApp</span></div>
         </div>
-        <div class="guarantee">
-          <span>★</span> 1 ventana de cambios · máx. 2 ajustes
-        </div>
+        <div class="guarantee"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="var(--red)" stroke-width="1.6" stroke-linejoin="round"/></svg>1 ventana de cambios · máx. 2 ajustes</div>
       </div>
       <div class="pcard-footer">
         <a class="btn-card btn-card-primary" href="#contacto">Cotizar este plan</a>
-        <a class="btn-card btn-card-ghost" href="#demos">Ver demo →</a>
+        <button class="btn-card btn-card-ghost" data-modal-open="landing">Ver cómo se vería
+          <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="12 5 19 12 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </div>
 
     <!-- VITRINA ONLINE -->
-    <div class="pcard featured">
+    <div class="pcard featured reveal" data-modal="vitrina" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver vista previa del plan Vitrina Online">
+      <button class="pcard-expand" data-modal-open="vitrina" aria-label="Expandir vista previa" tabindex="-1">
+        <svg viewBox="0 0 24 24" fill="none"><polyline points="15 3 21 3 21 9" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 21 3 21 3 15" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="3" x2="14" y2="10" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="21" x2="10" y2="14" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
       <div class="pcard-header">
-        <div class="pcard-icon">🛍️</div>
+        <div class="pcard-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke="var(--red)" stroke-width="1.6" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="var(--red)" stroke-width="1.6"/><path d="M16 10a4 4 0 0 1-8 0" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
         <div class="pcard-name">Vitrina Online</div>
         <div class="pcard-promise">Reduce costos y fraude. Expresa la identidad visual de la marca. Destaca tus productos estrella y genera pedidos directo a WhatsApp.</div>
       </div>
       <div class="pcard-price">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span class="price-original">$1.500.000</span>
-            <span class="price-discount">−40%</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:6px">
-            <span class="price-value">$800.000</span>
-            <span class="price-period">diseño web</span>
-          </div>
-          <div class="price-total-row">Hosting + Dominio: <strong>$200.000</strong> · Total: <strong>$1.000.000</strong></div>
+        <div class="price-label">Inversión del proyecto</div>
+        <div class="price-main">
+          <span class="price-value">$800.000</span>
+          <span class="price-period">diseño web</span>
         </div>
+        <div class="price-total-row">Hosting + Dominio: <strong>$200.000</strong> · Total: <strong>$1.000.000</strong></div>
+        <div class="price-note"><span class="dot"></span>Cupo limitado este mes</div>
       </div>
       <div class="pcard-body">
         <div>
           <div class="benefit-title">Incluye</div>
           <div class="benefit-list">
-            <div class="benefit-item"><span class="bi-icon">✓</span>3 vitrinas de 10 productos c/u</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>20 GB de espacio por 1 año</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>1 carrusel de destacados</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Botón flotante WhatsApp</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Botón flotante carrito de compras</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Formulario de pedido → WhatsApp</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>3 vitrinas de 10 productos c/u</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>20 GB de espacio por 1 año</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>1 carrusel de destacados</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Botón flotante WhatsApp</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Botón flotante carrito de compras</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Formulario de pedido → WhatsApp</div>
           </div>
         </div>
         <div class="pcard-additional">
           <div class="add-label">Adicionales</div>
-          <div class="add-chips">
-            <span class="chip">Dominio</span>
-            <span class="chip">Hosting</span>
-            <span class="chip">Línea WhatsApp</span>
-          </div>
+          <div class="add-chips"><span class="chip">Dominio</span><span class="chip">Hosting</span><span class="chip">Línea WhatsApp</span></div>
         </div>
-        <div class="guarantee">
-          <span>★</span> 2 ventanas de cambios · máx. 2 ajustes c/u
-        </div>
+        <div class="guarantee"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="var(--red)" stroke-width="1.6" stroke-linejoin="round"/></svg>2 ventanas de cambios · máx. 2 ajustes c/u</div>
       </div>
       <div class="pcard-footer">
         <a class="btn-card btn-card-primary" href="#contacto">Cotizar este plan</a>
-        <a class="btn-card btn-card-ghost" href="#demos">Ver demo →</a>
+        <button class="btn-card btn-card-ghost" data-modal-open="vitrina">Ver cómo se vería
+          <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="12 5 19 12 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </div>
 
     <!-- TIENDA ONLINE -->
-    <div class="pcard">
+    <div class="pcard reveal" data-modal="tienda" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver vista previa del plan Tienda Online">
+      <button class="pcard-expand" data-modal-open="tienda" aria-label="Expandir vista previa" tabindex="-1">
+        <svg viewBox="0 0 24 24" fill="none"><polyline points="15 3 21 3 21 9" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 21 3 21 3 15" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="3" x2="14" y2="10" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="21" x2="10" y2="14" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
       <div class="pcard-header">
-        <div class="pcard-icon">🏪</div>
+        <div class="pcard-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" stroke="var(--red)" stroke-width="1.6"/><circle cx="20" cy="21" r="1" stroke="var(--red)" stroke-width="1.6"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
         <div class="pcard-name">Tienda Online</div>
-        <div class="pcard-promise">Posicionamiento orgánico en buscadores web. Convierte leads en ventas reales. Adaptable a todos los dispositivos. Archivo editable de autogestión.</div>
+        <div class="pcard-promise">Posicionamiento orgánico en buscadores. Convierte leads en ventas reales. Adaptable a todos los dispositivos. Archivo editable de autogestión.</div>
       </div>
       <div class="pcard-price">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span class="price-original">$3.000.000</span>
-            <span class="price-discount">−40%</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:6px">
-            <span class="price-value">$1.500.000</span>
-            <span class="price-period">diseño web</span>
-          </div>
-          <div class="price-total-row">Hosting + Dominio: <strong>$200.000</strong> · Total: <strong>$1.700.000</strong></div>
+        <div class="price-label">Inversión del proyecto</div>
+        <div class="price-main">
+          <span class="price-value">$1.500.000</span>
+          <span class="price-period">diseño web</span>
         </div>
+        <div class="price-total-row">Hosting + Dominio: <strong>$200.000</strong> · Total: <strong>$1.700.000</strong></div>
+        <div class="price-note"><span class="dot"></span>Cupo limitado este mes</div>
       </div>
       <div class="pcard-body">
         <div>
           <div class="benefit-title">Incluye</div>
           <div class="benefit-list">
-            <div class="benefit-item"><span class="bi-icon">✓</span>10 categorías de 10 productos c/u</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>20 GB de espacio por 1 año</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>3 botones flotantes de redes sociales</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Pop-up + banner lateral + carrusel</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Formulario de pedido → WhatsApp</div>
-            <div class="benefit-item"><span class="bi-icon">✓</span>Archivo editable de autogestión</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>10 categorías de 10 productos c/u</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>20 GB de espacio por 1 año</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>3 botones flotantes de redes sociales</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Pop-up + banner lateral + carrusel</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Formulario de pedido → WhatsApp</div>
+            <div class="benefit-item"><svg class="bi-icon" viewBox="0 0 24 24"><path d="M18.36 6.64A9 9 0 1 1 5.64 6.64" fill="none" stroke="var(--ink-mute)" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="2" x2="12" y2="12.5" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/></svg>Archivo editable de autogestión</div>
           </div>
         </div>
         <div class="pcard-additional">
           <div class="add-label">Adicionales</div>
-          <div class="add-chips">
-            <span class="chip">Dominio</span>
-            <span class="chip">Hosting</span>
-            <span class="chip">Línea WhatsApp</span>
-          </div>
+          <div class="add-chips"><span class="chip">Dominio</span><span class="chip">Hosting</span><span class="chip">Línea WhatsApp</span></div>
         </div>
-        <div class="guarantee">
-          <span>★</span> 3 ventanas de cambios · máx. 2 ajustes c/u
-        </div>
+        <div class="guarantee"><svg viewBox="0 0 24 24" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" stroke="var(--red)" stroke-width="1.6" stroke-linejoin="round"/></svg>3 ventanas de cambios · máx. 2 ajustes c/u</div>
       </div>
       <div class="pcard-footer">
         <a class="btn-card btn-card-primary" href="#contacto">Cotizar este plan</a>
-        <a class="btn-card btn-card-ghost" href="#demos">Ver demo →</a>
+        <button class="btn-card btn-card-ghost" data-modal-open="tienda">Ver cómo se vería
+          <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="12 5 19 12 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ── DEMOS / MOCKUP PREVIEWS ──────────────────────────────── -->
+<!-- ── MODALES DE VISTA PREVIA ──────────────────────────────── -->
+
+<!-- Modal: Landing Page -->
+<div class="modal-overlay" id="modal-landing" role="dialog" aria-modal="true" aria-labelledby="modal-landing-title">
+  <div class="site-modal">
+    <div class="modal-browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="modal-url"><span class="fav"></span>tu-negocio.com</div>
+      <button class="modal-close" data-modal-close aria-label="Cerrar vista previa">
+        <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-scroll">
+      <div class="modal-preview-note">Vista previa de estructura con contenido de ejemplo — el diseño final se personaliza a tu marca</div>
+      <div class="mock-site" style="position:relative">
+        <div class="mock-site-nav">
+          <div class="mock-site-logo"><div class="dot"></div><span class="txt">Clínica Rojas</span></div>
+          <div class="mock-site-links"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="mock-hero-real">
+          <div class="mock-eyebrow-mini">Odontología estética · Bogotá</div>
+          <div class="mock-h1-real">Tu sonrisa,<br/>en las mejores manos.</div>
+          <p class="mock-p-real">Tratamientos personalizados con tecnología de punta. Agenda tu valoración inicial sin costo.</p>
+          <div class="mock-cta-real">Agendar cita →</div>
+        </div>
+
+        <div class="mock-section-label">Servicios · 5 categorías de contenido</div>
+        <div class="mock-services-row">
+          <div class="service-mini">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--red)" stroke-width="1.6"/><path d="M8 13s1.5 2 4 2 4-2 4-2" stroke="var(--red)" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+            <div class="t">Blanqueamiento</div>
+            <div class="d">Resultados visibles desde la 1ª sesión</div>
+          </div>
+          <div class="service-mini">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5z" stroke="var(--red)" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+            <div class="t">Ortodoncia</div>
+            <div class="d">Brackets estéticos e invisibles</div>
+          </div>
+          <div class="service-mini">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z" stroke="var(--red)" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+            <div class="t">Implantes</div>
+            <div class="d">Garantía de 5 años en procedimiento</div>
+          </div>
+        </div>
+
+        <div class="mock-section-label">Testimonios</div>
+        <div class="mock-testimonial">
+          <div class="stars">
+            <svg viewBox="0 0 24 24" fill="var(--red)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--red)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--red)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--red)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--red)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="q">"Excelente atención desde el primer momento. El proceso de ortodoncia fue muy claro y los resultados superaron mis expectativas."</div>
+          <div class="a">— Mariana T., paciente desde 2023</div>
+        </div>
+
+        <div class="mock-contact-row">
+          <div class="txt">
+            <div class="t">¿Lista para tu nueva sonrisa?</div>
+            <div class="d">Cra 15 #93-40, Bogotá · Lun-Sáb 8am-6pm</div>
+          </div>
+          <div class="btn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            Escribir ahora
+          </div>
+        </div>
+
+        <div class="mock-fab-col">
+          <div class="mock-fab fab-wa"><svg viewBox="0 0 24 24" fill="#fff"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-summary">
+      <div class="modal-summary-info">
+        <div class="modal-summary-name" id="modal-landing-title">Landing Page</div>
+        <div class="modal-summary-price">Inversión: <strong>$600.000</strong> · Total con hosting: <strong>$800.000</strong></div>
+      </div>
+      <div class="modal-summary-actions">
+        <a class="btn-card btn-card-ghost" href="https://mathewvalbuena.site/" target="_blank" rel="noopener">Ver ejemplo real</a>
+        <a class="btn-card btn-card-primary" href="#contacto">Cotizar este plan</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Vitrina Online -->
+<div class="modal-overlay" id="modal-vitrina" role="dialog" aria-modal="true" aria-labelledby="modal-vitrina-title">
+  <div class="site-modal">
+    <div class="modal-browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="modal-url"><span class="fav"></span>tu-negocio.com/tienda</div>
+      <button class="modal-close" data-modal-close aria-label="Cerrar vista previa">
+        <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-scroll">
+      <div class="modal-preview-note">Vista previa de estructura con contenido de ejemplo — el diseño final se personaliza a tu marca</div>
+      <div class="mock-site" style="position:relative">
+        <div class="mock-site-nav">
+          <div class="mock-site-logo"><div class="dot"></div><span class="txt">Ligero Urban</span></div>
+          <div class="mock-site-links"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="mock-tabs">
+          <div class="mock-tab active">Hombre</div>
+          <div class="mock-tab">Mujer</div>
+          <div class="mock-tab">Accesorios</div>
+        </div>
+
+        <div class="mock-carousel">
+          <div class="thumb"></div>
+          <div>
+            <div class="badge">Destacado</div>
+            <div class="t">Nueva colección Otoño</div>
+            <div class="d">Hasta 20% en la primera compra</div>
+          </div>
+        </div>
+
+        <div class="mock-section-label">Vitrina · Hombre (10 productos)</div>
+        <div class="mock-grid">
+          <div class="mock-prod-real"><div class="thumb"><span class="tag">Nuevo</span></div><div class="info"><div class="name">Chaqueta Urban Bomber</div><div class="price">$189.000</div></div></div>
+          <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Camiseta Oversize Basic</div><div class="price">$69.000</div></div></div>
+          <div class="mock-prod-real"><div class="thumb"><span class="tag">-15%</span></div><div class="info"><div class="name">Jean Slim Fit Denim</div><div class="price">$149.000</div></div></div>
+          <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Gorra Classic Logo</div><div class="price">$45.000</div></div></div>
+          <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Tenis Urban Street</div><div class="price">$219.000</div></div></div>
+          <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Sudadera Capucha Gris</div><div class="price">$129.000</div></div></div>
+        </div>
+
+        <div class="mock-order-form">
+          <div class="t">Hacer pedido</div>
+          <div class="fields">
+            <div class="field">Nombre completo</div>
+            <div class="field">Talla / Cantidad</div>
+          </div>
+          <div class="btn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            Enviar pedido por WhatsApp
+          </div>
+        </div>
+
+        <div class="mock-fab-col">
+          <div class="mock-fab fab-wa"><svg viewBox="0 0 24 24" fill="#fff"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1"/></svg></div>
+          <div class="mock-fab fab-cart"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" stroke="#fff" stroke-width="1.8"/><circle cx="20" cy="21" r="1" stroke="#fff" stroke-width="1.8"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-summary">
+      <div class="modal-summary-info">
+        <div class="modal-summary-name" id="modal-vitrina-title">Vitrina Online</div>
+        <div class="modal-summary-price">Inversión: <strong>$800.000</strong> · Total con hosting: <strong>$1.000.000</strong></div>
+      </div>
+      <div class="modal-summary-actions">
+        <a class="btn-card btn-card-ghost" href="https://dagon8523.github.io/Ligero_Urban_2.0/#inicio" target="_blank" rel="noopener">Ver ejemplo real</a>
+        <a class="btn-card btn-card-primary" href="#contacto">Cotizar este plan</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tienda Online -->
+<div class="modal-overlay" id="modal-tienda" role="dialog" aria-modal="true" aria-labelledby="modal-tienda-title">
+  <div class="site-modal">
+    <div class="modal-browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="modal-url"><span class="fav"></span>tu-negocio.com/shop</div>
+      <button class="modal-close" data-modal-close aria-label="Cerrar vista previa">
+        <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-scroll">
+      <div class="modal-preview-note">Vista previa de estructura con contenido de ejemplo — el diseño final se personaliza a tu marca</div>
+      <div class="mock-site" style="position:relative">
+        <div class="mock-popup">
+          <svg class="close" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="var(--ink-mute)" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="var(--ink-mute)" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="t">10% OFF</div>
+          <div class="d">En tu primera compra registrándote hoy</div>
+          <div class="btn">Aplicar cupón</div>
+        </div>
+
+        <div class="mock-site-nav">
+          <div class="mock-site-logo"><div class="dot"></div><span class="txt">TecnoStore</span></div>
+          <div class="mock-site-links"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="mock-topbanner">
+          <div class="t">Envío gratis en compras mayores a <em>$150.000</em></div>
+        </div>
+
+        <div class="mock-shop">
+          <div class="mock-sidebar">
+            <div class="sb-title">10 categorías</div>
+            <div class="mock-cat-real active"><span>Celulares</span><span class="n">128</span></div>
+            <div class="mock-cat-real"><span>Computadores</span><span class="n">64</span></div>
+            <div class="mock-cat-real"><span>Audio</span><span class="n">52</span></div>
+            <div class="mock-cat-real"><span>Gaming</span><span class="n">37</span></div>
+            <div class="mock-cat-real"><span>Hogar inteligente</span><span class="n">41</span></div>
+            <div class="mock-cat-real"><span>Belleza</span><span class="n">29</span></div>
+            <div class="mock-cat-real"><span>Deportes</span><span class="n">23</span></div>
+            <div class="mock-cat-real"><span>Bebés</span><span class="n">18</span></div>
+            <div class="mock-cat-real"><span>Moda</span><span class="n">55</span></div>
+            <div class="mock-cat-real"><span>Ofertas</span><span class="n">12</span></div>
+            <div class="mock-side-banner">
+              <div class="t">Black Week</div>
+              <div class="d">Hasta 40% OFF en audio y gaming</div>
+            </div>
+          </div>
+          <div>
+            <div class="mock-grid" style="grid-template-columns:repeat(3,1fr)">
+              <div class="mock-prod-real"><div class="thumb"><span class="tag">-20%</span></div><div class="info"><div class="name">Audífonos BT Pro X</div><div class="price">$159.900</div></div></div>
+              <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Smartwatch Series 5</div><div class="price">$349.900</div></div></div>
+              <div class="mock-prod-real"><div class="thumb"><span class="tag">Nuevo</span></div><div class="info"><div class="name">Cargador Rápido 65W</div><div class="price">$79.900</div></div></div>
+              <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Mouse Gamer RGB</div><div class="price">$89.900</div></div></div>
+              <div class="mock-prod-real"><div class="thumb"></div><div class="info"><div class="name">Teclado Mecánico Mini</div><div class="price">$219.900</div></div></div>
+              <div class="mock-prod-real"><div class="thumb"><span class="tag">-10%</span></div><div class="info"><div class="name">Parlante Portátil Max</div><div class="price">$139.900</div></div></div>
+            </div>
+            <div class="mock-order-form">
+              <div class="t">Finalizar pedido</div>
+              <div class="fields">
+                <div class="field">Dirección de envío</div>
+                <div class="field">Método de pago</div>
+              </div>
+              <div class="btn">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                Confirmar por WhatsApp
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mock-fab-col">
+          <div class="mock-fab fab-wa"><svg viewBox="0 0 24 24" fill="#fff"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1"/></svg></div>
+          <div class="mock-fab" style="background:#1877F2"><svg viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div>
+          <div class="mock-fab" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="#fff" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.1" fill="#fff"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-summary">
+      <div class="modal-summary-info">
+        <div class="modal-summary-name" id="modal-tienda-title">Tienda Online</div>
+        <div class="modal-summary-price">Inversión: <strong>$1.500.000</strong> · Total con hosting: <strong>$1.700.000</strong></div>
+      </div>
+      <div class="modal-summary-actions">
+        <a class="btn-card btn-card-ghost" href="https://dagon8523.github.io/Ligero_Urban_2.0/#inicio" target="_blank" rel="noopener">Ver ejemplo real</a>
+        <a class="btn-card btn-card-primary" href="#contacto">Cotizar este plan</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DEMOS ─────────────────────────────────────────────────── -->
 <div id="demos">
   <section>
-    <div class="tag">Demos</div>
-    <div class="red-line"></div>
+    <div class="tag"><span class="tag-dot"></span>Demos</div>
+    <div class="accent-arc"></div>
     <h2 class="section-h2">Boceto de cada producto</h2>
-    <p class="section-sub" style="margin:16px 0 0">Así se verá tu sitio web según el plan elegido. Cada diseño es personalizado con los colores e identidad de tu marca.</p>
+    <p class="section-sub" style="margin:16px 0 0">Así se verá tu sitio web según el plan elegido. Haz clic para ampliar cada boceto. Cada diseño final es personalizado con los colores e identidad de tu marca.</p>
+
     <div class="demos-grid">
 
-      <!-- Landing Page preview -->
-      <div class="demo-card demo-lp">
+      <!-- Landing -->
+      <div class="demo-card reveal" data-modal="landing" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver boceto de Landing Page">
         <div class="demo-top">
           <span class="demo-top-name">Landing Page</span>
-          <span class="tag">1 página</span>
+          <span class="demo-top-tag">1 página</span>
         </div>
         <div class="demo-preview">
           <div class="demo-preview-nav">
-            <div class="demo-dots">
-              <div class="demo-dot" style="background:#cc0000"></div>
-              <div class="demo-dot" style="background:#e5a70a"></div>
-              <div class="demo-dot" style="background:#22c55e"></div>
-            </div>
-            <div class="demo-url"></div>
+            <div class="demo-dots"><div class="demo-dot" style="background:var(--red)"></div><div class="demo-dot" style="background:#E5A70A"></div><div class="demo-dot" style="background:#1F9D55"></div></div>
+            <div class="demo-url-mini"></div>
           </div>
           <div class="demo-content">
-            <div style="width:60px;height:6px;background:#cc0000;border-radius:2px;margin-bottom:4px"></div>
+            <div style="width:56px;height:5px;background:var(--red);border-radius:2px"></div>
             <div class="demo-h">Tu Oferta</div>
             <div class="demo-p">Propuesta de valor clara · CTA directo</div>
-            <div class="demo-btn">¡Contáctame!</div>
-            <div style="margin-top:8px;display:flex;gap:4px">
-              <div style="width:50px;height:4px;background:#2e2e2e;border-radius:2px"></div>
-              <div style="width:40px;height:4px;background:#2e2e2e;border-radius:2px"></div>
-              <div style="width:55px;height:4px;background:#2e2e2e;border-radius:2px"></div>
-            </div>
+            <div class="demo-btn-mini">¡Contáctame!</div>
           </div>
-          <!-- WhatsApp floating -->
-          <div style="position:absolute;bottom:12px;right:12px;width:28px;height:28px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px">💬</div>
         </div>
-        <a class="demo-link" href="https://mathewvalbuena.site/" target="_blank">Ver ejemplo real →</a>
+        <div class="demo-link">Ver ejemplo real
+          <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="12 5 19 12 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
       </div>
 
-      <!-- Vitrina Online preview -->
-      <div class="demo-card demo-vo">
+      <!-- Vitrina -->
+      <div class="demo-card reveal" data-modal="vitrina" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver boceto de Vitrina Online">
         <div class="demo-top">
           <span class="demo-top-name">Vitrina Online</span>
-          <span class="tag">3 vitrinas</span>
+          <span class="demo-top-tag">3 vitrinas</span>
         </div>
         <div class="demo-preview">
           <div class="demo-preview-nav">
-            <div class="demo-dots">
-              <div class="demo-dot" style="background:#cc0000"></div>
-              <div class="demo-dot" style="background:#e5a70a"></div>
-              <div class="demo-dot" style="background:#22c55e"></div>
-            </div>
-            <div class="demo-url"></div>
+            <div class="demo-dots"><div class="demo-dot" style="background:var(--red)"></div><div class="demo-dot" style="background:#E5A70A"></div><div class="demo-dot" style="background:#1F9D55"></div></div>
+            <div class="demo-url-mini"></div>
           </div>
-          <!-- carrusel mock -->
-          <div style="width:92%;height:50px;background:linear-gradient(90deg,#2a2a2a,#1e1e1e);border-radius:4px;margin-top:28px;display:flex;align-items:center;padding:0 12px;gap:8px">
-            <div style="width:36px;height:36px;background:#cc0000;border-radius:3px"></div>
-            <div>
-              <div style="width:80px;height:5px;background:#3a3a3a;border-radius:2px;margin-bottom:4px"></div>
-              <div style="width:50px;height:4px;background:#2e2e2e;border-radius:2px"></div>
-            </div>
-          </div>
+          <div style="width:90%;height:44px;background:linear-gradient(90deg,var(--cream-2),var(--line-soft));border-radius:6px;margin-top:26px"></div>
           <div class="demo-vo-grid">
-            <div class="demo-vo-item"></div>
-            <div class="demo-vo-item"></div>
-            <div class="demo-vo-item"></div>
-            <div class="demo-vo-item"></div>
-            <div class="demo-vo-item"></div>
-            <div class="demo-vo-item"></div>
-          </div>
-          <div style="position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:6px">
-            <div style="width:24px;height:24px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px">💬</div>
-            <div style="width:24px;height:24px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px">🛒</div>
+            <div class="demo-vo-item"></div><div class="demo-vo-item"></div><div class="demo-vo-item"></div>
+            <div class="demo-vo-item"></div><div class="demo-vo-item"></div><div class="demo-vo-item"></div>
           </div>
         </div>
-        <a class="demo-link" href="https://dagon8523.github.io/Ligero_Urban_2.0/#inicio" target="_blank">Ver ejemplo real →</a>
+        <div class="demo-link">Ver ejemplo real
+          <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="12 5 19 12 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
       </div>
 
-      <!-- Tienda Online preview -->
-      <div class="demo-card demo-to">
+      <!-- Tienda -->
+      <div class="demo-card reveal" data-modal="tienda" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver boceto de Tienda Online">
         <div class="demo-top">
           <span class="demo-top-name">Tienda Online</span>
-          <span class="tag">10 categorías</span>
+          <span class="demo-top-tag">10 categorías</span>
         </div>
         <div class="demo-preview">
           <div class="demo-preview-nav">
-            <div class="demo-dots">
-              <div class="demo-dot" style="background:#cc0000"></div>
-              <div class="demo-dot" style="background:#e5a70a"></div>
-              <div class="demo-dot" style="background:#22c55e"></div>
-            </div>
-            <div class="demo-url"></div>
+            <div class="demo-dots"><div class="demo-dot" style="background:var(--red)"></div><div class="demo-dot" style="background:#E5A70A"></div><div class="demo-dot" style="background:#1F9D55"></div></div>
+            <div class="demo-url-mini"></div>
           </div>
           <div class="demo-to-sidebar">
-            <div style="font-size:8px;color:#888;margin-bottom:4px;letter-spacing:.08em">CATEGORÍAS</div>
-            <div class="demo-to-sb-item"></div>
-            <div class="demo-to-sb-item"></div>
-            <div class="demo-to-sb-item"></div>
-            <div class="demo-to-sb-item"></div>
-            <div class="demo-to-sb-item"></div>
-            <div class="demo-to-sb-item"></div>
+            <div style="font-size:8px;color:var(--ink-mute);margin-bottom:4px;letter-spacing:.08em">CATEGORÍAS</div>
+            <div class="demo-to-sb-item"></div><div class="demo-to-sb-item"></div><div class="demo-to-sb-item"></div>
+            <div class="demo-to-sb-item"></div><div class="demo-to-sb-item"></div><div class="demo-to-sb-item"></div>
           </div>
           <div class="demo-to-main">
-            <div class="demo-to-prod"></div>
-            <div class="demo-to-prod"></div>
-            <div class="demo-to-prod"></div>
-            <div class="demo-to-prod"></div>
-          </div>
-          <div style="position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:5px">
-            <div style="width:22px;height:22px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px">💬</div>
-            <div style="width:22px;height:22px;background:#cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px">🛒</div>
-            <div style="width:22px;height:22px;background:#1877F2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px">f</div>
+            <div class="demo-to-prod"></div><div class="demo-to-prod"></div>
+            <div class="demo-to-prod"></div><div class="demo-to-prod"></div>
           </div>
         </div>
-        <a class="demo-link" href="https://dagon8523.github.io/Ligero_Urban_2.0/#inicio" target="_blank">Ver ejemplo real →</a>
+        <div class="demo-link">Ver ejemplo real
+          <svg viewBox="0 0 24 24" fill="none"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="12 5 19 12 12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
       </div>
 
     </div>
   </section>
 </div>
 
-<!-- ── WHY RESET ─────────────────────────────────────────────── -->
-<div id="por-que" style="padding:80px 40px">
-  <div style="max-width:1100px;margin:0 auto">
-    <div class="tag">¿Por qué Reset?</div>
-    <div class="red-line"></div>
+<!-- ── POR QUÉ RESET ────────────────────────────────────────── -->
+<div id="por-que">
+  <section>
+    <div class="tag"><span class="tag-dot"></span>¿Por qué Reset?</div>
+    <div class="accent-arc"></div>
     <h2 class="section-h2">Lo que nos diferencia</h2>
     <div class="why-grid">
-      <div class="why-card">
-        <div class="why-icon">🔒</div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="var(--ink-soft)" stroke-width="1.7"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="var(--ink-soft)" stroke-width="1.7"/></svg></div>
         <div class="why-title">Herramientas originales</div>
         <div class="why-desc">Productos digitales originales y garantizados del proveedor, con asesoría y soporte incluido.</div>
       </div>
-      <div class="why-card">
-        <div class="why-icon">📱</div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" stroke="var(--ink-soft)" stroke-width="1.7"/><line x1="12" y1="18" x2="12.01" y2="18" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round"/></svg></div>
         <div class="why-title">100% Responsive</div>
         <div class="why-desc">Todos los sitios se adaptan perfectamente a celulares, tablets y computadores.</div>
       </div>
-      <div class="why-card">
-        <div class="why-icon">⚡</div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" stroke="var(--ink-soft)" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
         <div class="why-title">Entrega en 15 días</div>
         <div class="why-desc">Tiempo de entrega estimado de 15 días hábiles desde la confirmación del anticipo.</div>
       </div>
-      <div class="why-card">
-        <div class="why-icon">🤝</div>
+      <div class="why-card reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--ink-soft)" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="var(--ink-soft)" stroke-width="1.7"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="var(--ink-soft)" stroke-width="1.7" stroke-linecap="round"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--ink-soft)" stroke-width="1.7" stroke-linecap="round"/></svg></div>
         <div class="why-title">Acompañamiento total</div>
         <div class="why-desc">Asesoría y capacitación durante todo el proceso. Soporte técnico remoto post-entrega.</div>
       </div>
     </div>
-  </div>
+  </section>
 </div>
 
-<!-- ── PROCESS ───────────────────────────────────────────────── -->
+<!-- ── PROCESO ───────────────────────────────────────────────── -->
 <div id="proceso">
   <section>
-    <div class="tag">Proceso</div>
-    <div class="red-line"></div>
+    <div class="tag"><span class="tag-dot"></span>Proceso</div>
+    <div class="accent-arc"></div>
     <h2 class="section-h2">Cómo trabajamos</h2>
     <div class="process-steps">
-      <div class="step">
-        <div class="step-num">1</div>
+      <div class="step reveal">
+        <div class="step-num"><span class="tick"></span>1</div>
         <div class="step-title">Asesoría inicial</div>
         <div class="step-desc">Entendemos tu negocio, objetivos y el plan que mejor se adapta.</div>
       </div>
-      <div class="step">
-        <div class="step-num">2</div>
+      <div class="step reveal">
+        <div class="step-num"><span class="tick"></span>2</div>
         <div class="step-title">50% Anticipo</div>
         <div class="step-desc">Confirmamos el pedido y comenzamos el diseño personalizado.</div>
       </div>
-      <div class="step">
-        <div class="step-num">3</div>
+      <div class="step reveal">
+        <div class="step-num"><span class="tick"></span>3</div>
         <div class="step-title">Diseño y ajustes</div>
         <div class="step-desc">Compartimos avances y aplicamos los cambios según tu plan.</div>
       </div>
-      <div class="step">
-        <div class="step-num">4</div>
+      <div class="step reveal">
+        <div class="step-num"><span class="tick"></span>4</div>
         <div class="step-title">Entrega y soporte</div>
         <div class="step-desc">Tu sitio live. Pago del 50% restante y capacitación incluida.</div>
       </div>
@@ -690,21 +1470,20 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40
 </div>
 
 <!-- ── CTA ───────────────────────────────────────────────────── -->
-<div id="contacto" style="padding:80px 40px">
+<div id="contacto">
   <div class="cta-box">
-    <div class="tag">¡Empieza hoy!</div>
-    <div class="red-line" style="margin:14px auto 24px"></div>
+    <svg class="cta-watermark" viewBox="0 0 420 420" aria-hidden="true"><use href="#logo-r-icon"/></svg>
+    <div class="tag"><span class="tag-dot"></span>¡Empieza hoy!</div>
     <h2>¿Listo para llevar<br/>tu negocio al siguiente nivel?</h2>
     <p>Escríbenos ahora y recibe una asesoría personalizada sin costo. Tenemos el plan ideal para tu negocio.</p>
     <div class="cta-actions">
-      <a class="btn-wa" href="https://wa.me/573000000000?text=Hola%20Reset%2C%20quiero%20información%20sobre%20sus%20planes" target="_blank">
-        💬 Escribir por WhatsApp
+      <a class="btn-wa" href="https://wa.me/573000000000?text=Hola%20Reset%2C%20quiero%20información%20sobre%20sus%20planes" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.9-.9L3 21l1.9-5.7a8.4 8.4 0 0 1 12.4-11 8.4 8.4 0 0 1 3.7 7.2z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Escribir por WhatsApp
       </a>
-      <a class="btn-primary" href="mailto:contacto@resetdigital.co">
-        Enviar correo
-      </a>
+      <a class="btn-primary" href="mailto:contacto@resetdigital.co">Enviar correo</a>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-top:24px">Forma de pago: 50% anticipo · 50% contra entrega · Vigencia 30 días</p>
+    <p class="cta-payment-note">Forma de pago: 50% anticipo · 50% contra entrega · Vigencia 30 días</p>
   </div>
 </div>
 
@@ -714,7 +1493,10 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40
     <div class="footer-red-bar"></div>
     <div class="footer-top">
       <div class="footer-brand">
-        <div class="footer-wordmark"><span>R</span>eset</div>
+        <div class="footer-brand-row">
+          <svg class="logo-mark" width="30" height="30" viewBox="0 0 420 420" aria-hidden="true"><use href="#logo-r-icon"/></svg>
+          <div class="wordmark footer-wordmark"><span class="rmark">R</span>eset</div>
+        </div>
         <div class="footer-tagline">Soluciones Digitales Empresariales<br/>Bogotá, Colombia</div>
       </div>
       <div class="footer-links">
@@ -746,10 +1528,120 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:40px 40
     </div>
     <div class="footer-bottom">
       <span>© 2025 Reset · Todos los derechos reservados</span>
-      <span>Diseñado con ❤ en Bogotá</span>
+      <span>Diseñado en Bogotá</span>
     </div>
   </div>
 </footer>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<script>
+// scroll-reveal genérico — cualquier elemento con clase .reveal
+// (y sus hijos directos con clase .mission-block, .card-reveal, etc.)
+// gana .in-view al entrar en viewport
+(function(){
+  const items = document.querySelectorAll('.reveal, .mission-block, .pcard, .demo-card, .why-card, .step');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in-view');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.15});
+  items.forEach(el=>io.observe(el));
+})();
+
+// ── Sistema de modales de vista previa ─────────────────────
+(function(){
+  let lastTrigger = null;
+
+  function openModal(id, trigger){
+    const overlay = document.getElementById('modal-'+id);
+    if(!overlay) return;
+    lastTrigger = trigger || document.activeElement;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const closeBtn = overlay.querySelector('.modal-close');
+    if(closeBtn) closeBtn.focus();
+  }
+
+  function closeModal(overlay){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    if(lastTrigger && typeof lastTrigger.focus === 'function') lastTrigger.focus();
+  }
+
+  // Disparadores: tarjetas completas (click o Enter/Espacio) y botones explícitos
+  document.querySelectorAll('[data-modal]').forEach(card=>{
+    card.addEventListener('click', function(e){
+      // si el clic vino de un link/botón interno con su propia acción, no interceptar
+      if(e.target.closest('a.btn-card-primary, .btn-card[href]')) return;
+      openModal(card.dataset.modal, card);
+    });
+    card.addEventListener('keydown', function(e){
+      if((e.key === 'Enter' || e.key === ' ') && e.target === card){
+        e.preventDefault();
+        openModal(card.dataset.modal, card);
+      }
+    });
+  });
+  document.querySelectorAll('[data-modal-open]').forEach(btn=>{
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      openModal(btn.dataset.modalOpen, btn);
+    });
+  });
+
+  // Cierre: botón X, click en overlay (fuera del modal), tecla Esc
+  document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+    overlay.querySelectorAll('[data-modal-close]').forEach(btn=>{
+      btn.addEventListener('click', ()=>closeModal(overlay));
+    });
+    overlay.addEventListener('click', function(e){
+      if(e.target === overlay) closeModal(overlay);
+    });
+    // trampa de foco simple dentro del modal
+    overlay.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ closeModal(overlay); return; }
+      if(e.key === 'Tab'){
+        const focusables = overlay.querySelectorAll('a[href], button:not([disabled])');
+        if(!focusables.length) return;
+        const first = focusables[0], last = focusables[focusables.length-1];
+        if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
+    });
+  });
+})();
+
+// contador animado de stats del hero al entrar en viewport
+(function(){
+  const stats = document.querySelectorAll('.stat-num[data-count]');
+  const nested = document.querySelectorAll('.stat-num span[data-count]');
+  const targets = [...stats, ...nested];
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const el = e.target;
+        const end = parseInt(el.dataset.count,10);
+        const dur = 1100;
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min(1,(now-start)/dur);
+          const eased = 1 - Math.pow(1-p,3);
+          el.textContent = Math.round(eased*end);
+          if(p<1) requestAnimationFrame(tick);
+          else el.textContent = end;
+        }
+        requestAnimationFrame(tick);
+        io.unobserve(el);
+      }
+    });
+  },{threshold:.5});
+  targets.forEach(el=>io.observe(el));
+})();
+</script>
 
 </body>
 </html>
