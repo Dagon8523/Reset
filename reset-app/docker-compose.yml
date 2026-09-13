@@ -1,0 +1,17 @@
+services:
+  web:
+    build: {context: ., dockerfile: ops/docker/Dockerfile.web}
+    ports: ["5173:80"]
+  api:
+    build: {context: ., dockerfile: ops/docker/Dockerfile.api}
+    ports: ["8000:8000"]
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+  redis:
+    image: redis:7-alpine
+volumes: {postgres_data: {}}
